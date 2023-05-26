@@ -1,0 +1,12 @@
+1. Компонент form.blade.php:
+
+	@props(['active' => false])
+
+	<form {{ $attributes }}>
+	
+	</form>
+	
+	
+2. Вставка компонента:
+
+	 <x-form action="{{ route=('login.attempt') }}" method="POST" {{ $attributes->class(['foo', 'bar', ($active ? 'active' : '')]) }}></x-form>

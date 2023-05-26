@@ -1,0 +1,49 @@
+1. Migration:
+
+	public function up()
+    {
+        Schema::create('categories', function (Blueprint $table) {
+            $table->softDeletes();
+        });
+    }
+	
+	
+2. Model:
+
+		class SomeModel extends Model
+		{
+			use HasFactory;
+			use SoftDeletes;
+		}
+		
+		
+3. Controller:
+
+		public function deletedCategories() 
+		{
+			$items = Category::onlyTrashed()->get();
+			return view('categories.category-deleted-all', compact('items'));
+		}
+
+		public function restoreDeletedCategories($id) 
+		{
+			$restoreItem = Category::onlyTrashed()->findOrFail($id);
+			$restoreItem->restore();
+			return redirect()->route('categories.index');
+		}
+
+		public function removeDeletedCategories($id) 
+		{
+			Category::onlyTrashed()->findOrFail($id)->forceDelete();
+			return redirect()->route('categories.deleted');
+		}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

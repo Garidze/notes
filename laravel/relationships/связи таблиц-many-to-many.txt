@@ -1,0 +1,170 @@
+На примере Post Tag:
+	
+	a. php artisan make:model Post -m -c -r (таблица posts);
+	б. php artisan make:model Tag -m -c -r (таблица tags)
+	
+
+1. Создать сводную таблицу от названия таблиц в единственном числе по алфавиту:
+	
+	- php artisan make:migration create_post_tag_table;
+	- php artisan migrate;
+	(table post_tag -> post_id, tag_id  (columns))
+	
+	
+2. Миграция для create_post_tag_table:
+
+	use App\Models\Post;
+	use App\Models\Tag;
+	
+	public function up()
+    {
+        Schema::create('post_tag', function (Blueprint $table) {
+            $table->foreignIdFor(Post::class)->constrained();
+            $table->foreignIdFor(Tag::class)->constrained();
+        });
+    }
+	
+	
+3. В моделях:
+
+	Post:
+	
+		class Post extends Model
+			{
+
+				use HasFactory;
+
+				protected $fillable = [];
+
+				public function tags()
+				{
+					return $this->belongsToMany(Tag::class)->withTimestamps();
+				}
+
+			}
+			
+	Tag:
+	
+		class Tag extends Model
+		{
+
+			use HasFactory;
+
+			protected $fillable = [];
+
+			public function posts()
+			{
+				return $this->belongsToMany(Post::class)->withTimestamps();
+			}
+			
+		}
+		
+		
+4. View:
+
+	Create:
+	
+		<select name="tags[]" id="tags" multiple>
+			@foreach($tags as $id => $value)
+				<option value="{{ $id }}" {{ collect(old('tags'))->contains($id) ? 'selected' : '' }}>{{ $value }}</option>
+			@endforeach
+		</select>
+	
+	Edit:
+
+		<select name="tags[]" id="tags" style="border: 1px solid #e7e7e7;" multiple>
+			@foreach($tags as $id => $value)
+				<option value="{{ $id }}" {{ collect($post->tags)->pluck('title')->contains($value) ? 'selected' : '' }}>
+					{{ $value }}
+				</option>
+			@endforeach
+		</select>
+		
+	-----------
+	<select name="tags[]" - массив, в который записываются значения option
+	
+		
+5. Controller:
+
+	public function store(PostRequest $request)
+    {
+        $data = $request->validated();
+        $post = Post::create($data);
+        $post->tags()->sync($data['tags']); // вызов метода из модели tags()
+        return redirect()->route('posts.index');
+    }
+	
+	
+---------------------
+Request:
+
+ public function rules()
+    {
+        return [
+            'url' => 'required|unique:tags',
+            'title' => 'required|unique:tags',
+            'description' => 'nullable|min:5',
+            'tags' => 'required|array|min:1'
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'url' => 'Url тега',
+            'title' => 'Название тега',
+            'description' => 'Описание тега',
+            'tags' => 'Список тегов',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'tags.required' => 'Choose at least 1 option'
+        ];
+    }
+	
+	
+--------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			

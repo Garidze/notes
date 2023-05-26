@@ -1,0 +1,75 @@
+<div class="wrapper">
+    <div class="content" id="app">
+	
+        <app-popup title="Hello World!">
+            <template v-slot>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias culpa cum, eaque eum excepturi facere
+                hic, id laudantium molestias, odio quae quod quos rem rerum sunt ullam velit? Architecto commodi
+                corporis eligendi ipsam molestias provident quis temporibus. Odio, perspiciatis, sed.
+            </template>
+        </app-popup>
+		
+        <div class="section">
+            <div class="c-container">
+                <div class="section__body">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+let AppPopup = {
+    name: 'AppPopup',
+    props: {
+        title: {type: String, default: 'Unset'},
+
+    },
+    data() {
+      return {
+          show: true,
+      }
+    },
+    methods: {
+        close() {
+            this.show = false;
+        }
+    },
+    template: `<div class="popupAlert" v-show="show">
+                    <div class="popupAlert__info">
+                        <h1>{{ title }}</h1>
+                        <hr>
+                        <p><slot></slot></p>
+                        <hr>
+                        <slot name="buttons">
+                            <button type="button" @click="close">Close</button>
+                        </slot>
+                    </div>
+               </div>`
+}
+
+let practice = Vue.createApp({
+    components: { AppPopup },
+    data() {
+        return {
+		
+		}
+    },
+    methods: {
+
+    },
+    computed: {
+
+    },
+    watch: {
+
+    },
+    created() {
+
+    },
+    mounted() {
+
+    }
+})
+practice.mount('#app')

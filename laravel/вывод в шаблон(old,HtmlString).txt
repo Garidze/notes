@@ -1,0 +1,5 @@
+1. {!! old('name', $product->description) !!}
+
+2. Если вам всё же нужно экранировать вывод, но дескрипшн вывести как есть, то его можно обернуть в HtmlString
+
+{{ old('name') ?? new HtmlString($product->description) }}

@@ -1,0 +1,9 @@
+---css---
+.router-link-exact-active {
+  text-decoration: underline;
+}
+
+-------------------------------OR-------------------------------
+
+---TAG---
+<router-link :to="{ name: 'cart' }" exact-active-class="text-danger">Cart</router-link>

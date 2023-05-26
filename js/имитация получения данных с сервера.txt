@@ -1,0 +1,20 @@
+----------------------------------
+
+let arr = ['one', 'two', 'three'];
+
+async function func(data) {
+    let str = await new Promise(resolve => setTimeout(()=> resolve(data),2000));
+    console.log(str);
+}
+
+----------------------------------
+
+let arr = [11,22,33];
+async function getData(data) {
+    let res = await new Promise(resolve => setTimeout(()=>resolve(data),3000));
+    function clb(data) {
+        console.log(data);
+    }
+    clb(res);
+}
+getData(arr);

@@ -1,0 +1,3 @@
+<div class="table__cell">
+	{{\Carbon\Carbon::parse( $user->updated_at )->setTimezone('Europe/Moscow')->format('d-m-Y H:i:s')}}
+</div>

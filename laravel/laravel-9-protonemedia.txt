@@ -1,0 +1,21 @@
+https://github.com/protonemedia/laravel-form-components#customize-the-blade-views
+
+1. npm install bootstrap
+
+2. @import 'bootstrap' в файле main.scss;
+
+3. php artisan vendor:publish --provider="ProtoneMedia\LaravelFormComponents\Support\ServiceProvider";
+
+4. в файле ( config/form-components.php ) меняем -  'framework' => 'bootstrap-5',
+
+
+
+-------------------------------------------------------------------------------------
+ПРИМЕР:
+	
+		<x-form method="put" action="{{ route('form.action') }}">
+			<x-form-input name="name" label="Имя"></x-form-input>
+			<x-form-input name="last_name" label="Фамилия" ></x-form-input>
+			<x-form-textarea name="message" placeholder="Введите сообщение" class="my-2"></x-form-textarea>
+			<x-form-submit>Отправить</x-form-submit>
+		</x-form>

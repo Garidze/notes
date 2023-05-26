@@ -1,0 +1,25 @@
+DB field name: 
+
+	email_verified_at (not null check)
+	
+1. Model:
+
+	a. раскомментировать в модели User: 
+		// use Illuminate\Contracts\Auth\MustVerifyEmail;
+	b. подключит интерфейс в модели User:
+		class User extends Authenticatable implements MustVerifyEmail
+		{
+			//...
+		}
+	
+
+web.php:
+
+	Route::middleware('auth', 'verified')->group(function () {
+		Route::resource('category', CategoryController::class)->parameters(['category'=>'id']);
+		Route::resource('product', ProductController::class)->parameters(['product'=>'id']);
+		Route::controller(PasswordChange::class)->prefix('password-change')->group(function (){
+			Route::get('/index', 'index')->name('password.change.index');
+			Route::put('/change', 'change')->name('password.change.store');
+		});
+	});

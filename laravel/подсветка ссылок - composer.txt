@@ -1,0 +1,72 @@
+1. Create file app/helpers.php: 
+
+	<?php
+
+	use Illuminate\Support\Facades\Route;
+
+	if(! function_exists('test')) {
+	
+		function test() {
+			dd('Hello test');
+		}
+		
+	}
+
+	if(! function_exists('active_link')){
+
+		function active_link(string $name, string $active = 'active'): string
+		{
+			return Route::is($name) ? $active : '';
+		}
+		
+	}
+	
+2. Подключение файлов в composer.json:
+
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        },
+        "files": [
+            "app/helpers.php"
+        ]
+    },
+	
+	КОНСОЛЬ:
+	
+		composer dumpautoload
+	
+
+3. Использование в blade:
+
+	{{ test() }}
+	
+	<a href="{{ route('register') }}" class="linkClass {{ active_link('register') }}"
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

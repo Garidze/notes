@@ -1,0 +1,56 @@
+1. Миграция:
+
+	public function up()
+    {
+        Schema::create('comments', function (Blueprint $table) {
+            $table->tinyInteger('status')->default(0);
+        });
+    }
+	
+	
+2. Создать файл App\Enums\Comment\CommentStatus.php содержимое: // Название файла и название enum должны совпадать
+
+	<?php
+
+		namespace App\Enums;
+
+		enum CommentStatus: int
+		{
+
+			case PROCESSING = 0;
+			case APPROVED = 1;
+			case REJECTED = 2;
+
+			public function textMessage()
+			{
+				return match ($this->value) {
+					self::PROCESSING->value => 'В обработке',
+					self::APPROVED->value => 'Одобрено',
+					self::REJECTED->value => 'Отклонено',
+				};
+			}
+
+		}
+		
+3. Модель:
+
+	use App\Enums\Comment\CommentStatus;
+	
+	    protected $casts = [
+			'status' => CommentStatus::class
+		];
+		
+		
+4. Использование:
+
+    $vacation = Vacation::findOrFail($id);
+    $vacation->status = CommentStatus::APPROVED;
+	$vacation->update();
+		
+		
+		
+		
+		
+		
+		
+		
