@@ -1,0 +1,7 @@
+now()->addMinute();
+
+now()->addMinutes(30);
+
+now()->addHour();
+
+now()->addHours(24);

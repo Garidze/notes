@@ -1,0 +1,31 @@
+Пример:
+	
+		public function show($post)
+		{
+			$data = cache()->remember("post.{$post}", now()->addMinute(), function () use ($post) {
+				return Post::findOrFail($post);
+			});
+		}
+	
+	тоже самое:
+
+		public function show($post)
+		{
+			$data = cache()
+				->remember(
+					key: "post.{$post}",
+					ttl: now()->addMinute(),
+					callback: function () use ($post) {
+						return Post::findOrFail($post);
+					}
+				);
+			dd($data->toArray());
+		}
+
+now()->addMinute();
+
+now()->addMinutes(30);
+
+now()->addHour();
+
+now()->addHours(24);
