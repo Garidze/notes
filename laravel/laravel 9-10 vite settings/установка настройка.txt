@@ -1,7 +1,7 @@
 1. (npm i) -and (npm i autoprefixer) -and (npm i -D sass) -and (npm i postcss)
 
 
-2. положить(создать) в корень файл - postcss.config.js
+2. положить(создать) в корень файл - postcss.config.js или postcss.config.cjs(для послединх версий)
 	содержимое файла:
 	
 		module.exports = {
