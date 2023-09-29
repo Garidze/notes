@@ -29,6 +29,7 @@
 		public function category()
 		{
 			return $this->belongsTo(Category::class);
+			return $this->hasOne(Product::class, 'id', 'id_ip');
 		}
 		
 	(название функций не имеет значения)
@@ -37,7 +38,7 @@
 	
 	public function index()
     {
-        $products = Product::with('category')->all();
+        $products = Product::with('category')->get();
         return view('products.product-all', compact('products'));
     }
 	
