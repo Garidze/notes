@@ -53,7 +53,7 @@
     
 -----------------------------------------------------------------------
 	
-Для запуска массового Seeder вписываем в файл DatabaseSeder метода run:
+Для запуска массового Seeder вписываем в файл DatabaseSeeder метода run(database/seeders/DatabaseSeeder.php):
 
 	    public function run()
 		{

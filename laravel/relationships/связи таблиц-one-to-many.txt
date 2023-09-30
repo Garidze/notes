@@ -29,7 +29,7 @@
 		public function category()
 		{
 			return $this->belongsTo(Category::class);
-			return $this->hasOne(Product::class, 'id', 'id_ip');
+			// return $this->hasOne(Product::class, 'id', 'id_ip');
 		}
 		
 	(название функций не имеет значения)
