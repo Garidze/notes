@@ -1,0 +1,116 @@
+1. Blade component:
+
+		<div class="itemCard__images">
+			@if(!$message->images)
+				<div class="itemList__cell">У этого сообщения нет изображений...</div>
+			@else
+				<popup-slider :img-array="{{ Js::from($message->images) }}"></popup-slider>
+			@endif
+		</div>
+
+
+2. vue component:
+
+		<template>
+
+			<teleport to=".wrapper">
+				<div class="popup" v-if="sliderActive">
+					<div class="imagePopup">
+						<div class="c-container">
+							<button type="button" class="btnClose" @click="sliderActive = false">Close</button>
+							<swiper
+								:modules="modules"
+								:slides-per-view="1"
+								:space-between="10"
+								navigation
+								:loop="true"
+								:pagination="{ clickable: true }"
+								@swiper="onSwiper"
+							>
+								<swiper-slide v-for="sliderImage in imgArray">
+									<img :src="'../../storage/' + sliderImage" alt="image">
+								</swiper-slide>
+							</swiper>
+						</div>
+					</div>
+				</div>
+			</teleport>
+
+			<div class="itemCard__image"
+				 v-for="(img, nImg) in images"
+				 :style="{ backgroundImage:'url(../../storage/'+ img +')'}"
+				 :key="nImg"
+				 @click="showSlider(nImg)"
+			>
+			</div>
+			
+		</template>
+
+		<script>
+		
+			// import Swiper core and required modules
+			import { Navigation, Pagination, Scrollbar, Autoplay } from 'swiper/modules';
+			
+			// Import Swiper Vue.js components
+			import { Swiper, SwiperSlide } from 'swiper/vue';
+
+			// Import Swiper styles
+			import 'swiper/css';
+			import 'swiper/css/navigation';
+			import 'swiper/css/pagination';
+			import 'swiper/css/scrollbar';
+			import 'swiper/css/autoplay';
+
+			export default {
+				components: {
+					Swiper,
+					SwiperSlide,
+				},
+				props: {
+					imgArray: { type:Array }
+				},
+				data() {
+					return {
+						images: this.imgArray,
+						sliderActive: false,
+						activeSlide: 0,
+						swiper: null,
+					}
+				},
+				methods: {
+					onSwiper(swiper) {
+						this.swiper = swiper;
+						this.swiper.slideTo(this.activeSlide,0);
+					},
+					showSlider(nImg) {
+						this.sliderActive = true;
+						this.activeSlide = nImg;
+					},
+				},
+				setup() {
+					return {
+						modules: [Navigation, Pagination, Scrollbar, Autoplay],
+					};
+				},
+			}
+		
+		</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
