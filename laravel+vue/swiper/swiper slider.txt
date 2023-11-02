@@ -1,3 +1,5 @@
+https://swiperjs.com/vue
+
 1. npm i swiper
 
 

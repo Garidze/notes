@@ -1,3 +1,5 @@
+https://laravel.com/docs/10.x/eloquent#soft-deleting
+
 1. Migration:
 
 	public function up()
@@ -9,6 +11,8 @@
 	
 	
 2. Model:
+		
+		use Illuminate\Database\Eloquent\SoftDeletes;
 
 		class SomeModel extends Model
 		{
