@@ -46,6 +46,32 @@
     $vacation = Vacation::findOrFail($id);
     $vacation->status = CommentStatus::APPROVED;
 	$vacation->update();
+	
+	
+5. Blade:
+
+	<select name="user_role">
+		@foreach(\App\Enums\Users\UserRole::cases() as $case)
+				<option value="{{ $case }}" @if($user->user_role == $case) selected @endif>
+					{{ $case->textMessage() }}<br>
+				</option>
+		@endforeach
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 		
 		
 		
