@@ -1,4 +1,4 @@
-AppServiceProvider.php:
+app/Providers/AppServiceProvider.php:
 
     public function boot()
     {
