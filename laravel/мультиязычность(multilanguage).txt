@@ -88,6 +88,63 @@
 			Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
 			...
 		});
+		
+		
+Применение:
+
+
+VER#1:
+
+	<div class="welcome__title">{!! __('pages.titles.welcome_title') !!}</div>
+	
+	
+	-lang/en/pages/titles.php:
+		
+		<?php
+
+		return [
+			'welcome_title' => 'Welcome!',
+
+		];
+		
+		
+	-lang/ru/pages/titles.php:
+		
+		<?php
+
+		return [
+			'welcome_title' => 'Добро пожаловать!',
+
+		];
+		
+		
+	VER#2:
+	
+	<div class="welcome__title">{!! __('pages.titles.main.welcome_title') !!}</div>
+	
+	
+	-lang/en/pages/titles.php:
+		
+		<?php
+
+		return [
+		
+			'main' => [
+				'welcome_title' => 'Welcome!'
+			],
+			
+		];
+		
+		
+	-lang/ru/pages/titles.php:
+		
+		<?php
+
+		return [
+			'main' => [
+				'welcome_title' => 'Добро пожаловать!'
+			],
+		];
 
 
 
