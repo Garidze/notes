@@ -1,0 +1,26 @@
+Подключение по SSH :
+
+	mysql -u root;
+	
+	mysql> CREATE DATABASE django_db;
+	
+	mysql> CREATE USER 'django_user'@'localhost' IDENTIFIED BY 'Пароль_для_Входа';
+	
+	mysql> GRANT ALL ON django_db.* TO 'django_user'@'localhost';
+	
+	mysql> FLUSH PRIVILEGES;
+	
+	mysql> EXIT
+	
+	
+	
+	
+Комманды MySQL:
+
+	Вывод всех пользователей:
+	
+		mysql> SELECT User,Host FROM mysql.user;
+		
+	Удаление пользователя:
+	
+		DROP USER 'django_user'@'localhost';
