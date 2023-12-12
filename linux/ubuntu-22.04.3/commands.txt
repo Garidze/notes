@@ -10,6 +10,14 @@
 
 # sudo systemctl restart mysql
 
+# вывести рабочую директорию:
+
+	pwd
+
+# Изменение прав доступа на папку из под root:
+
+	root@web:/var/www/procode# sudo chown -R procode:procode storage
+
 # очистка каталога: rm -rf /tmp/folder/*
 
 # перезагрузка через терминал -> reboot

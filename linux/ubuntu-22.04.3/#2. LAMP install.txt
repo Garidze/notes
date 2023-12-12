@@ -69,14 +69,14 @@ https://devicetests.com/fix-phpmyadmin-not-working-ubuntu
 			
 			sudo nano /etc/apache2/sites-available/your_domain.conf :
 			
-				<VirtualHost *:80>
-					ServerAdmin webmaster@localhost
-					ServerName your_domain
-					ServerAlias www.your_domain
-					DocumentRoot /var/www/your_domain
-					ErrorLog ${APACHE_LOG_DIR}/error.log
-					CustomLog ${APACHE_LOG_DIR}/access.log combined
-				</VirtualHost>
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+	ServerName your_domain
+	ServerAlias www.your_domain
+	DocumentRoot /var/www/your_domain
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
 				
 			включим файл с помощью a2ensite -> sudo a2ensite your_domain.conf ;
 			
@@ -103,7 +103,7 @@ https://devicetests.com/fix-phpmyadmin-not-working-ubuntu
 
 	Подключение по SSH :
 
-		mysql -u root ;
+		mysql -u root;
 		
 		mysql> CREATE DATABASE django_db;
 		
@@ -128,6 +128,15 @@ https://devicetests.com/fix-phpmyadmin-not-working-ubuntu
 		
 			DROP USER 'django_user'@'localhost';
 		
+		Просмотр всех БД:
+		
+			SHOW DATABASES;
+			
+		Удаление БД:
+		
+			DROP DATABASE procode;
+		
+		 
 
 
 
