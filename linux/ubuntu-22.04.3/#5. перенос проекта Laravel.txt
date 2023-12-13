@@ -62,23 +62,21 @@
 	
 	
 	
-5. The stream or file "/var/www/procode/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied:
+5. Возможные ошибки:
 
-	sudo chown -R $USER:www-data storage
+	The stream or file "/var/www/procode/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied:
+		OR
+	file_put_contents(/var/www/procode/storage/framework/sessions/uWvWI1afBnzcNK1qq1qKT4wya7PnexNWYZ72zSNb): Failed to open stream: Permission denied:
 
+		chmod -R gu+w storage
 
-	
-6. file_put_contents(/var/www/procode/storage/framework/sessions/uWvWI1afBnzcNK1qq1qKT4wya7PnexNWYZ72zSNb): Failed to open stream: Permission denied:
+		chmod -R guo+w storage
 
-	chmod -R gu+w storage
-
-	chmod -R guo+w storage
-
-	php artisan cache:clear
+		php artisan cache:clear
 	
 	
 	
-7. Перезапись символьных ссылок:
+6. Перезапись символьных ссылок:
 
 	rm public/storage
 	php artisan optimize:clear
@@ -86,7 +84,7 @@
 	
 	
 	
-8. php artisan migrate
+7. php artisan migrate
 	
 	
 	
