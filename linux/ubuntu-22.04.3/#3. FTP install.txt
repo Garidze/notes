@@ -66,6 +66,9 @@ userlist_enable=YES
 userlist_file=/etc/vsftpd.userlist
 userlist_deny=NO
 
+# разрешаем показ скрытых файлов:
+force_dot_files=YES
+
 
 
 

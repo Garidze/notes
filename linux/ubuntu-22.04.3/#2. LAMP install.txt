@@ -52,7 +52,24 @@ https://devicetests.com/fix-phpmyadmin-not-working-ubuntu
 		
 			переназначаем домашнюю папку для пользователя -> usermod -md /var/www/your_domain user_name
 			
-		- Перезагружаемся, входим под user_name:
+		- Файл конфигурации виртуального хоста:
+			
+			sudo nano /etc/apache2/sites-available/your_domain.conf :
+			
+				<VirtualHost *:80>
+					ServerAdmin webmaster@localhost
+					ServerName your_domain
+					ServerAlias www.your_domain
+					DocumentRoot /var/www/your_domain
+					ErrorLog ${APACHE_LOG_DIR}/error.log
+					CustomLog ${APACHE_LOG_DIR}/access.log combined
+				</VirtualHost>
+				
+			включим файл с помощью a2ensite -> sudo a2ensite your_domain.conf ;
+			
+			выключим сайт по умолчанию, определенный в 000-default.conf -> sudo a2dissite 000-default.conf
+			
+		- Тест работоспособности:
 		
 			создаем страницу для теста -> sudo nano /var/www/your_domain/index.html :
 			
@@ -65,22 +82,7 @@ https://devicetests.com/fix-phpmyadmin-not-working-ubuntu
 						</body>
 					</html>
 		
-		- Файл настроек виртуального хоста:
-			
-			sudo nano /etc/apache2/sites-available/your_domain.conf :
-			
-<VirtualHost *:80>
-	ServerAdmin webmaster@localhost
-	ServerName your_domain
-	ServerAlias www.your_domain
-	DocumentRoot /var/www/your_domain
-	ErrorLog ${APACHE_LOG_DIR}/error.log
-	CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-				
-			включим файл с помощью a2ensite -> sudo a2ensite your_domain.conf ;
-			
-			выключим сайт по умолчанию, определенный в 000-default.conf -> sudo a2dissite 000-default.conf
+		
 		
 3. PHP, MySQL:
 
@@ -90,9 +92,11 @@ https://devicetests.com/fix-phpmyadmin-not-working-ubuntu
 	
 	sudo apt install libapache2-mod-php8.1 ,
 	
+	sudo systemctl enable mysql ,
+	
 	sudo systemctl start mysql ,
 	
-	sudo systemctl enable mysql ,
+	sudo systemctl status mysql
 	
 	добавить в файл    /etc/apache2/apache2.conf    строку -> Include /etc/phpmyadmin/apache.conf
 	

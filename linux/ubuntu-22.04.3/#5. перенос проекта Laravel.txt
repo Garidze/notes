@@ -1,0 +1,125 @@
+Подготовка:
+
+	- Создаем каталог:
+		
+		sudo mkdir /var/www/procode
+			
+	- Указываем права на каталог:
+		
+		sudo chown -R $USER:$USER /var/www/procode
+			
+	- Перезагружаемся, входим под root:
+		
+		переназначаем домашнюю папку для пользователя(формат: usermod -md /var/www/your_domain user_name):
+			
+			usermod -md /var/www/procode procode
+			
+	- Перезагружаемся, входим под user:
+			
+		Редактируем файл - /etc/apache2/sites-available/procode.conf:
+
+			<VirtualHost *:80>
+				ServerName procode.info
+				ServerAdmin admin@localhost
+				DocumentRoot /var/www/procode/public
+				<Directory /var/www/procode>
+					AllowOverride All
+				</Directory>
+				ErrorLog ${APACHE_LOG_DIR}/error.log
+				CustomLog ${APACHE_LOG_DIR}/access.log combined
+			</VirtualHost>
+
+
+	Включаем модуль rewrite:
+
+		sudo a2enmod rewrite
+		
+	Перезагружаем apache:
+		
+		sudo systemctl restart apache2
+
+
+
+
+1. Перекидываем проект;
+
+
+2. Установка npm:
+
+	sudo apt install npm
+
+
+
+3. Установка пакетов npm:
+
+	npm i
+	
+
+	
+4. Установка пакетов composer:
+
+	composer install
+	
+	
+	
+5. The stream or file "/var/www/procode/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied:
+
+	sudo chown -R $USER:www-data storage
+
+
+	
+6. file_put_contents(/var/www/procode/storage/framework/sessions/uWvWI1afBnzcNK1qq1qKT4wya7PnexNWYZ72zSNb): Failed to open stream: Permission denied:
+
+	chmod -R gu+w storage
+
+	chmod -R guo+w storage
+
+	php artisan cache:clear
+	
+	
+	
+7. Перезапись символьных ссылок:
+
+	rm public/storage
+	php artisan optimize:clear
+	php artisan storage:link
+	
+	
+	
+8. php artisan migrate
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
