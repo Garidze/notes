@@ -39,18 +39,19 @@ https://devicetests.com/fix-phpmyadmin-not-working-ubuntu
 	# Настройка каталога:
 	
 		
-		- Создаем каталог:
+		- Добавляем пользователя:
 		
-			sudo mkdir /var/www/your_domain ;
+			useradd procode -d /var/www/procode -m ;
 			
+			chown -R procode:www-data /var/www/procode
 			
-		- Указываем права на каталог:
+		- Добавляем каталоги:
 		
-			sudo chown -R $USER:$USER /var/www/your_domain
+			mkdir /var/www/procode/sites 
 			
-		- Перезагружаемся, входим под root:
-		
-			переназначаем домашнюю папку для пользователя -> usermod -md /var/www/your_domain user_name
+			mkdir /var/www/procode/sites/procode
+			
+			mkdir /var/www/procode/sites/procode/public
 			
 		- Файл конфигурации виртуального хоста:
 			

@@ -28,6 +28,28 @@
 
 # Список всех групп в файле -> /etc/group
 
+# Копирование файла:
+
+	sudo cp /etc/vsftpd.conf /etc/vsftpd.conf.copy
+	
+# Включение-отключение конфигурации сайта:
+
+	sudo a2ensite your_domain.conf ,
+	
+	sudo a2dissite 000-default.conf ;
+	
+# Переназначение домашней папки пользователя:
+
+	usermod -md /var/www/your_domain user_name ;
+	
+# Создать пользователя:
+
+	useradd procode -d /var/www/procode -m ;
+	
+# Удалить пользователя:
+
+	deluser user_name --remove-all-files
+
 
 
 

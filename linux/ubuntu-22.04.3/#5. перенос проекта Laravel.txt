@@ -1,38 +1,27 @@
 Подготовка:
 
-	- Создаем каталог:
-		
-		sudo mkdir /var/www/procode
-			
-	- Указываем права на каталог:
-		
-		sudo chown -R $USER:$USER /var/www/procode
-			
-	- Перезагружаемся, входим под root:
-		
-		переназначаем домашнюю папку для пользователя(формат: usermod -md /var/www/your_domain user_name):
-			
-			usermod -md /var/www/procode procode
-			
-	- Перезагружаемся, входим под user:
-			
-		Редактируем файл - /etc/apache2/sites-available/procode.conf:
-
-			<VirtualHost *:80>
-				ServerName procode.info
-				ServerAdmin admin@localhost
-				DocumentRoot /var/www/procode/public
-				<Directory /var/www/procode>
-					AllowOverride All
-				</Directory>
-				ErrorLog ${APACHE_LOG_DIR}/error.log
-				CustomLog ${APACHE_LOG_DIR}/access.log combined
-			</VirtualHost>
-
-
 	Включаем модуль rewrite:
 
 		sudo a2enmod rewrite
+			
+	Редактируем файл - /etc/apache2/sites-available/procode.conf:
+
+		<VirtualHost *:80>
+			ServerName procodeinfo
+			ServerAlias procode.info www.procode.info
+			ServerAdmin admin@localhost
+			DocumentRoot /var/www/procode/public
+			<Directory /var/www/procode>
+				AllowOverride All
+			</Directory>
+			ErrorLog ${APACHE_LOG_DIR}/error.log
+			CustomLog ${APACHE_LOG_DIR}/access.log combined
+		</VirtualHost>
+		
+		включим файл с помощью a2ensite -> sudo a2ensite your_domain.conf ;
+		
+		выключим сайт по умолчанию, определенный в 000-default.conf -> sudo a2dissite 000-default.conf
+
 		
 	Перезагружаем apache:
 		
