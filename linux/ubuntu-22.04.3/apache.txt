@@ -1,0 +1,63 @@
+2 сайта по портам:
+
+	- /etc/apache2/ports.conf:
+	
+		Listen 80
+		Listen 8081
+		systemctl restart apache2
+		
+	- sudo ufw allow 8081/tcp 
+	
+		sudo ufw disable
+		sudo ufw enable
+		sudo ufw status
+		
+	- etc/apache2/sites-available/site1.conf:
+	
+		<VirtualHost *:80>
+			ServerName site1.local
+			ServerAlias www.site1.local
+			ServerAdmin admin@localhost
+			DocumentRoot /var/www/site1/public
+			<Directory /var/www/site1>
+				AllowOverride All
+			</Directory>
+			ErrorLog ${APACHE_LOG_DIR}/error.log
+			CustomLog ${APACHE_LOG_DIR}/access.log combined
+		</VirtualHost>
+		
+		sudo a2ensite site1.conf
+	
+		
+	- etc/apache2/sites-available/site2.conf:
+	
+		<VirtualHost *:8081>
+			ServerName site2.local
+			ServerAlias www.site2.local
+			ServerAdmin admin@localhost
+			DocumentRoot /var/www/site2/public
+			<Directory /var/www/site2>
+				AllowOverride All
+			</Directory>
+			ErrorLog ${APACHE_LOG_DIR}/error.log
+			CustomLog ${APACHE_LOG_DIR}/access.log combined
+		</VirtualHost>
+		
+		sudo a2ensite site2.conf
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

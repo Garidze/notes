@@ -49,6 +49,22 @@
 # Удалить пользователя:
 
 	deluser user_name --remove-all-files
+	
+# Открытые порты:
+
+	netstat -ntlp
+	
+# Добавление новой группы:
+
+	sudo addgroup new_group_name
+	
+# Добавление существующего пользователя в группу:
+
+	sudo usermod -a -G groupname username
+	
+# Создание нового пользователя и добавление его в группу:
+
+	sudo useradd -m new_user_name -g group_name
 
 
 

@@ -1,0 +1,25 @@
+1. Генерируем ключ в терминале без подключения к серверу(по умолчанию папка - C:\Users\ProCode\.ssh):
+
+	ssh-keygen
+	
+
+2. Вводим passphrase (запоминаем) или оставляем пустым чтобы не воодить подтверждение ключа(лучше не вводить)
+
+
+3. Копируем сгенерированный ключ на сервер коммандой:
+
+	cat C:\Users\ProCode\.ssh\id_rsa.pub | ssh root@192.168.1.107 "mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && chmod -R go= ~/.ssh && cat >> ~/.ssh/authorized_keys"
+	
+	
+4. /etc/ssh/sshd_config:
+
+	PasswordAuthentication no
+	
+	
+5. При подключении подтверждаем passphrase из п.2
+
+
+
+Сброс ключей:
+
+	ssh-keygen -R 192.168.1.107
