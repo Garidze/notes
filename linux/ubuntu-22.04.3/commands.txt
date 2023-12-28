@@ -54,6 +54,14 @@
 
 	netstat -ntlp
 	
+# Добавление нового пользователя в определенном каталоге:
+
+	useradd procode -m -d /var/www/procode ;
+			
+	passwd procode ;
+			
+	sudo chown -R procode:www-data /var/www/procode
+	
 # Добавление новой группы:
 
 	sudo addgroup new_group_name

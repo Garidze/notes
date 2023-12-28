@@ -41,7 +41,9 @@ https://devicetests.com/fix-phpmyadmin-not-working-ubuntu
 		
 		- Добавляем пользователя:
 		
-			useradd procode -d /var/www/procode -m ;
+			useradd procode -m -d /var/www/procode ;
+			
+			passwd procode ;
 			
 			chown -R procode:www-data /var/www/procode
 			
@@ -52,6 +54,8 @@ https://devicetests.com/fix-phpmyadmin-not-working-ubuntu
 			mkdir /var/www/procode/sites/procode
 			
 			mkdir /var/www/procode/sites/procode/public
+			
+			sudo chown -R procode:www-data /var/www/procode
 			
 		- Файл конфигурации виртуального хоста:
 			

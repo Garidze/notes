@@ -35,23 +35,20 @@
 
 2. Установка npm:
 
-	sudo apt install npm
-
-
-
-3. Установка пакетов npm:
-
-	npm i
+	- sudo apt install npm
 	
+	- npm i
 
 	
-4. Установка пакетов composer:
+3. Установка пакетов composer:
 
-	composer install
+	- apt install composer
+
+	- composer install
 	
 	
 	
-5. Возможные ошибки:
+4. Возможные ошибки:
 
 	The stream or file "/var/www/procode/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied:
 		OR
