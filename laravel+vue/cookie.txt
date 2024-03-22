@@ -1,0 +1,90 @@
+VUE: // УСТАНОВКА COOKIE НА ФРОНТЕ
+
+	 data()  {
+			return {
+				sidebarIsOpen: '',
+			}
+		},
+		methods: {
+			getCookie(cookieKey) {
+				let cookieValue = document.cookie.match('(^|;)?' + cookieKey + '=([^;]*)(;|$)');
+				return cookieValue ? cookieValue[2] : false;
+			}
+		},
+		watch: {
+			sidebarIsOpen: {
+				handler(val) {
+					document.cookie = 'sidebarIsOpen=' + val + '; path=/';
+					// console.log(document.cookie);
+				},
+				deep: true
+			},
+		},
+		beforeMount() {
+			if(this.getCookie('sidebarIsOpen')) {
+				this.sidebarIsOpen = JSON.parse(this.getCookie('sidebarIsOpen'));
+			}else {
+				this.sidebarIsOpen = true;
+			}
+			document.cookie = 'sidebarIsOpen=' + this.sidebarIsOpen + '; path=/';
+		},
+		
+	
+BLADE: // КНОПКА НА ВСЕХ СТРАНИЦАХ
+
+		<li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button" @click="sidebarIsOpen = !sidebarIsOpen">
+                <i class="fas fa-bars"></i>
+            </a>
+        </li>
+		
+		
+BLADE: // САЙДБАР С КЛАССАМИ
+
+		<body class="hold-transition sidebar-mini layout-fixed @if(json_decode(Cookie::get('sidebarIsOpen'))) sidebar-collapse{{Cookie::get('sidebarIsOpen')}} @endif">
+		
+		
+LARAVEL НАСТРОЙКА:
+
+	app/Http/Middleware/EncryptCookies.php
+	
+			<?php
+
+				namespace App\Http\Middleware;
+
+				use Illuminate\Cookie\Middleware\EncryptCookies as Middleware;
+
+				class EncryptCookies extends Middleware
+				{
+					/**
+					 * The names of the cookies that should not be encrypted.
+					 *
+					 * @var array<int, string>
+					 */
+					protected $except = [
+						'sidebarIsOpen'
+					];
+				}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

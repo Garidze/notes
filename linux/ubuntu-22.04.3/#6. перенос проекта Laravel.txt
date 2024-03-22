@@ -71,6 +71,9 @@
 	
 	
 7. php artisan migrate
+
+
+
 	
 	
 	
