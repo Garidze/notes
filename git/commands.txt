@@ -92,6 +92,16 @@
 	
 	5: git push -f origin master .
 
+
+
+# Репозиторий на новый комп
+
+	git init
+
+	git remote add origin https://github.com/Garidze/notes.git
+
+	
+
 		
 		
 	
