@@ -99,6 +99,8 @@
 	git init
 
 	git remote add origin https://github.com/Garidze/notes.git
+	
+	git log
 
 	
 
