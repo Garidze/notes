@@ -1,1 +1,7 @@
 composer create-project laravel/laravel .
+
+composer:
+	set http_proxy=<your_http_proxy:proxy_port>
+	set https_proxy=<your_https_proxy:proxy_port>
+
+composer create-project laravel/laravel:^10.0 
