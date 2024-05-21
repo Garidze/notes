@@ -1,0 +1,30 @@
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Test extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'description'
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (Test $test) {
+            $test->description = $test->description ?? str($test->name)->slug();
+        });
+
+//        static::updating(function (Test $test) {
+//            //
+//        });
+//
+//        static::deleting(function (Test $test) {
+//            //
+//        });
+
+    }
+}
