@@ -15,23 +15,27 @@
 
 3. app/Helpers/MyHelper.php :
 
-	if (! function_exists('hello')) {
-	
-		function hello() {
-			dd('Hello world!');
-		}
+	<?php
+
+		if (! function_exists('hello')) {
 		
-	}
+			function hello() {
+				dd('Hello world!');
+			}
+			
+		}
 	
-	
-4. В любом месте приложения: hello();
 
 
-Нужно или не нужно!?
-
-	Загрузка провайдера: 
+4.	Загрузка провайдера: 
 
 		laravel 10 -> Открываем файл config/app.php и добавляем наш HelperServiceProvider над AppServiceProvider;
 		
 		laravel 11 -> Открываем файл bootstrap/providers.php и добавляем наш HelperServiceProvider над AppServiceProvider;
+		
+		php artisan optimize;
+
+		
+		
+В любом месте приложения: hello();
 
