@@ -1,0 +1,27 @@
+HTML:
+
+	<input type="file" name="images[]" accept="image/*" id="images" multiple>
+
+
+JS:
+
+	let inputFileField = document.getElementById('images');
+	let [...files] = inputFileField; //let [...files] = e.target.files;
+	let dataTransfer = new DataTransfer();
+	let imageSrc = [];
+	
+	console.log(inputFileField.files);
+	
+	files.forEach(i=> {
+		if(i.type.startsWith('image/')){
+			let imgSrc = URL.createObjectURL(i);
+			imageSrc.push(imgSrc);
+			dataTransfer.items.add(i);
+		}
+	});
+	
+	console.log(dataTransfer.items);
+	console.log(dataTransfer.files);
+	
+	dataTransfer.items.clear(); 
+	dataTransfer.items.remove(n);

@@ -1,0 +1,29 @@
+*, *:before, *:after {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+a {
+  color: #000;
+}
+a, a:visited {
+  text-decoration: none;
+}
+a:focus,a:active {
+  outline:none;
+}
+button {
+  cursor: pointer;
+  background: none;
+}
+ul li {
+  list-style-type: none;
+}
+img {
+  display: block;
+  max-width: 100%;
+}
+input, select {
+  outline: none;
+}

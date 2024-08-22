@@ -1,0 +1,257 @@
+-----HTML-----version-1
+
+ <div class="content" id="app">
+        <div class="section">
+            <div class="c-container">
+                <div class="section__body">
+                    <app-button
+                            @click="this.show = !show"
+                            :name="show ? 'Hide' : 'Show'"
+                    >
+                    </app-button>
+					
+					//TRANSITION--------------------------------------------
+                    <transition name="MyAnimateName">
+                        <app-info-card
+                                v-if="show"
+                                title="Title"
+                                info="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam amet asperiores blanditiis cum cumque delectus dolor dolorem eius eos esse est fugiat fugit illum libero maiores modi officia porro quibusdam recusandae reiciendis sint, voluptas voluptate. Necessitatibus odit tempore temporibus ullam!"
+                        >
+                            <template v-slot>
+                                <app-button
+                                        @click="this.show = !show"
+                                        name="Hide"
+                                >
+                                </app-button>
+                            </template>
+                        </app-info-card>
+                    </transition>
+					//END TRANSITION--------------------------------------------
+					
+                </div>
+            </div>
+        </div>
+    </div>
+
+-----CSS-----
+.MyAnimateName-enter-active {
+    animation: fadeIn 0.2s;
+}
+.MyAnimateName-leave-active {
+    animation: fadeOut 0.2s;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+
+
+-----HTML-----version-2 ИСПОЛЬЗУЯ БИБЛИОТЕКУ(-И) https://animate.style/
+/////////////ПОДКЛЮЧИТЬ/////////////////////////////////////////////////////////////////////////////////////////////
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ <div class="content" id="app">
+        <div class="section">
+            <div class="c-container">
+                <div class="section__body">
+                    <app-button
+                            @click="this.show = !show"
+                            :name="show ? 'Hide' : 'Show'"
+                    >
+                    </app-button>
+					
+					//TRANSITION--------------------------------------------ИСПОЛЬЗУЕМ КЛАССЫ БИБЛИОТЕКИ(СПИСОК НА САЙТЕ)
+					<transition
+						enter-active-class="animate__animated animate__backInDown"
+						leave-active-class="animate__animated animate__backOutDown"
+                    >
+                        <app-info-card
+                                v-if="show"
+                                title="Title"
+                                info="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam amet asperiores blanditiis cum cumque delectus dolor dolorem eius eos esse est fugiat fugit illum libero maiores modi officia porro quibusdam recusandae reiciendis sint, voluptas voluptate. Necessitatibus odit tempore temporibus ullam!"
+                        >
+                            <template v-slot>
+                                <app-button
+                                        @click="this.show = !show"
+                                        name="Hide"
+                                >
+                                </app-button>
+                            </template>
+                        </app-info-card>
+                    </transition>
+					//END TRANSITION--------------------------------------------
+					
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	
+---------------------ДВА ЭЛЕМЕНТА--------------------------
+<transition
+	mode="out-in" /////////////////////////////////////
+	enter-active-class="animate__animated animate__backInDown"
+	leave-active-class="animate__animated animate__backOutDown"
+>
+	//ПЕРВЫЙ ЭЛЕМЕНТ
+	<app-info-card
+			v-if="show"
+			title="Title#1"
+			class="infoCard__success"
+			info="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam amet asperiores blanditiis cum cumque delectus dolor dolorem eius eos esse est fugiat fugit illum libero maiores modi officia porro quibusdam recusandae reiciendis sint, voluptas voluptate. Necessitatibus odit tempore temporibus ullam!"
+	>
+		<template v-slot>
+			<app-button
+					@click="this.show = !show"
+					name="Hide"
+			>
+			</app-button>
+		</template>
+	</app-info-card>
+	//END ПЕРВЫЙ ЭЛЕМЕНТ
+	
+	//ВТОРОЙ ЭЛЕМЕНТ
+	<app-info-card
+		v-else
+		title="Title#2"
+		class="infoCard__danger"
+		info="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam amet asperiores blanditiis cum cumque delectus dolor dolorem eius eos ess!!"
+	>
+		<template v-slot>
+			<app-button
+					@click="this.show = !show"
+					name="Hide"
+			>
+			</app-button>
+		</template>
+	</app-info-card>
+	//END ВТОРОЙ ЭЛЕМЕНТ
+	
+</transition>
+
+
+-----HTML-----version-3
+
+<transition
+	name="iconRotate"
+	v-if="activated"
+	appear
+	appear-active-class="iconAppear"
+	mode="out-in"
+>
+	<div
+		class="formItemIcon"
+		:key="valid"
+		:class="valid ? '_icon-check-circle' : '_icon-exclamation-circle'"
+	/>
+</transition>
+
+<style>
+
+//вращение иконки после поялвления
+.iconRotate-enter-active{
+    animation: iconRotateIn 0.2s;
+}
+.iconRotate-leave-active{
+    animation: iconRotateOut 0.2s;
+}
+@keyframes iconRotateIn {
+    from {
+        transform: rotateY(90deg);
+    }
+    to {
+        transform: rotateY(0deg);
+    }
+}
+@keyframes iconRotateOut {
+    from {
+        transform: rotateY(0deg);;
+    }
+    to {
+        transform: rotateY(90deg);
+    }
+}
+
+//появление иконки
+.iconAppear{
+    animation: fadeIn 1s;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+</style>
+
+
+
+---------------------------------HTML + VUE----------------------------------
+
+	<transition
+			@before-enter="accordionClose"
+			@enter="accordionOpen"
+			@leave="accordionClose"
+	>
+		<div class="accordion" v-if="isOpen"></div>
+	</transition>
+	
+	
+	data() {
+        return {
+            currDocWidth: document.documentElement.clientWidth,
+        }
+    },
+	methods: {
+		getCurrDocWidth() {
+            this.currDocWidth = document.documentElement.clientWidth;
+        },
+        accordionOpen(el) {
+            if(this.currDocWidth <= 480) {
+                el.style.height = el.scrollHeight + "px";
+            }
+        },
+        accordionClose(el) {
+            if(this.currDocWidth <= 480) {
+                el.style.height = "0px";
+            }
+        }
+    },
+	mounted() {
+        window.addEventListener('resize', this.getCurrDocWidth);
+    },
+    unmounted() {
+        window.removeEventListener('resize', this.getCurrDocWidth);
+    },
+---------------------------------END HTML + VUE------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

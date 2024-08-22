@@ -1,0 +1,99 @@
+1. Interface CurrencyHandlerInterface:
+
+	<?php
+
+		namespace App\Services\Contracts;
+
+		interface CurrencyHandlerInterface
+		{
+			public function setDefaultCurrency();
+
+			public function clearDefaultCurrency();
+
+		}
+		
+		
+2. Базовый класс с общими методами:
+
+	<?php
+
+		namespace App\Services\Currencies;
+
+		use App\Enums\Currencies;
+
+		class BaseCurrency
+		{
+			public function setDefaultCurrency($defaultCurrency = 'BYN')
+			{
+				$defaultCurrency = Currencies::tryFrom($defaultCurrency) ? $defaultCurrency : 'BYN';
+				if(!session()->has('currentCurrency')) {
+					session(['currentCurrency' => $defaultCurrency]);
+				}
+				return session('currentCurrency');
+			}
+
+			public function clearDefaultCurrency()
+			{
+				if(session()->has('currentCurrency')) session()->forget('currentCurrency');
+			}
+		}
+		
+		
+3. Класс наследующий с интерфейсом:
+
+	<?php
+
+		namespace App\Services\Currencies;
+
+		use App\Services\Contracts\CurrencyHandlerInterface;
+		use App\Services\Currencies\BaseCurrency;
+
+		class CurrencyNBRBHandler extends BaseCurrency implements CurrencyHandlerInterface
+		{
+
+		}
+		
+		
+4. 
+		
+		
+5. Сервис провайдер CurrencyHandlerServiceProvider:
+
+	<?php
+
+		namespace App\Providers;
+
+		use App\Services\Contracts\CurrencyHandlerInterface;
+		use App\Services\Currencies\CurrencyNBRBHandler;
+		use Illuminate\Foundation\Application;
+		use Illuminate\Support\ServiceProvider;
+
+		class CurrencyHandlerServiceProvider extends ServiceProvider
+		{
+		
+			public function register(): void
+			{
+				$this->app->bind(CurrencyHandlerInterface::class, function (Application $app) {
+				
+				
+					return new CurrencyNBRBHandler(); // Когда нужна другая реализация, создается и заменяется здесь другим классом
+					
+					
+				});
+			}
+
+			public function boot(): void
+			{
+				//
+			}
+		}
+		
+		
+5. Пример использования в AppServiceProvider.php:
+
+    public function boot(CurrencyHandlerInterface $currencyHandlerInterface): void
+    {
+
+        View::share('currentCurrency', $currencyHandlerInterface->setDefaultCurrency());
+
+    }

@@ -1,0 +1,76 @@
+<div class="section">
+	<div class="c-container">
+		<div class="section__body">
+			<app-todo-action
+					v-for="(i,n) in toDoList"
+					:title="i.title"
+					:max="i.max"
+					:current="i.current"
+					@maketask="makeTask(n, $event)"
+			></app-todo-action>
+		</div>
+	</div>
+</div>
+
+--------COMPONENT--------
+
+let AppTodoAction = {
+    props: {
+        title: {type: String},
+        current: {type: Number},
+        max: {type: Number, required: true},
+    },
+    methods: {
+        makeTask() {
+            this.$emit('maketask', {some: 'Hello world'});
+        }
+    },
+    computed: {
+      progressPercent() {
+          return this.current / this.max;
+      },
+      alertClasses() {
+          return {
+              'bgRed': this.progressPercent < 0.25,
+              'bgYellow': this.progressPercent > 0.25 && this.progressPercent < 0.9,
+              'bgGreen': this.progressPercent > 0.9,
+          }
+      }
+    },
+    template: `<div class="task" :class="alertClasses">
+                    <h2>{{ title }}</h2>
+                    <hr>
+                    <p>Current: {{ current }}</p>
+                    <p>Limit: {{ max }}</p>
+                    <hr>
+                    <h3 v-if="current == max">Task Done!</h3>
+                    <button type="button" @click="makeTask">Do Task</button>
+                </div>`
+}
+
+--------END COMPONENT--------
+
+let practice = Vue.createApp({
+    components: {
+        AppTodoAction
+    },
+    data() {
+        return {
+            toDoList: [
+                {title: 'Task № 1', current: 0, max: 3},
+                {title: 'Task № 2', current: 0, max: 5},
+                {title: 'Task № 3', current: 0, max: 6},
+            ]
+        }
+    },
+    methods: {
+        makeTask(n, e) {
+            let todoEl = this.toDoList[n];
+            if(todoEl.current < todoEl.max) {
+                todoEl.current++;
+            }
+            console.log(e);
+        }
+    },
+})
+practice.mount('#app')

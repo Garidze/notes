@@ -1,0 +1,24 @@
+PHP:
+
+	$data = json_decode(file_get_contents('http://www.example.com/'), true);
+	
+	
+LARAVEL(https://laravel.com/docs/10.x/http-client):
+
+	use Illuminate\Support\Facades\Http;
+
+	$response = Http::get('http://example.com');
+	
+	
+	
+	$response->body() : string;
+	$response->json($key = null, $default = null) : array|mixed;
+	$response->object() : object;
+	$response->collect($key = null) : Illuminate\Support\Collection;
+	$response->status() : int;
+	$response->successful() : bool;
+	$response->redirect(): bool;
+	$response->failed() : bool;
+	$response->clientError() : bool;
+	$response->header($header) : string;
+	$response->headers() : array;

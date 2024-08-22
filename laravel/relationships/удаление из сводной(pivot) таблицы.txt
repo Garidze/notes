@@ -1,0 +1,20 @@
+Вариант № 1(нужна проверка):
+	
+	public function destroy($id) 
+	{
+        $user = User::findOrFail($id);
+		$user->roles()->detach();
+		$user->roles()->delete();
+        return redirect()->route('admin.user.index');
+    }
+	
+	
+Вариант № 2(рабочий):
+
+	public function destroyForever($id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        $user->roles()->detach();
+        $user->forceDelete();
+        return redirect()->route('admin.user.deleted');
+    }

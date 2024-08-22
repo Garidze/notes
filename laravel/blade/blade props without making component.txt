@@ -1,0 +1,61 @@
+#example-1
+
+@props([
+    'routeAction',
+    'routeMethod' => 'post',
+    'redefineMethod' => '',
+    'btnTitle',
+    'btnClass' => ''
+])
+
+<form action="{{ $routeAction }}" method="{{ $routeMethod }}">
+    @csrf
+    @method($redefineMethod)
+    <button class="btn {{ $btnClass }}">
+        <span>{{ $btnTitle }}</span>
+        <img src="../img/delete.png" alt="delete">
+    </button>
+</form>
+
+-----------------------------------------------------------
+
+#example-2
+
+@props([
+    'title',
+    'inputType' => 'text',
+    'inputName',
+    'inputValue'
+])
+
+@php
+$id = $inputName . '-' . bin2hex(random_bytes(3));
+@endphp
+
+<div class="formItem">
+    <label for="{{ $id }}">{{ $title }}</label>
+    <input type="{{ $inputType }}" name="{{ $inputName }}" id="{{ $id }}" value="{{ $inputValue }}">
+    @error($inputName)
+        <small>*{{ $message }}</small>
+    @enderror
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

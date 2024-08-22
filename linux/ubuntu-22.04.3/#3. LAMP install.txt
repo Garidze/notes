@@ -1,0 +1,187 @@
+https://icopydoc.ru/nastrojka-servera-ubunty-22-04-ftp-python/
+https://devicetests.com/fix-phpmyadmin-not-working-ubuntu
+
+
+1. Обновление:
+
+	sudo apt update, 
+	sudo apt -y upgrade;
+	
+	
+		
+2. Apache:
+
+	sudo apt install apache2 ,
+	
+	sudo systemctl enable apache2 ,
+	
+	sudo systemctl status apache2 ,
+		
+		
+	# Далее проверим, что у нас открыты порты 80 и 433:
+		
+		sudo ufw status ;
+		
+	# Если система ответит: Status: inactive, то нужно будет сперва выполнить команду:
+		
+		sudo ufw enable ;
+		
+		
+	# Открываетм порты:
+	
+		sudo ufw allow 22/tcp
+		sudo ufw allow 80/tcp
+		sudo ufw allow 433/tcp
+		sudo ufw disable
+		sudo ufw enable
+		sudo ufw status
+		
+	# Настройка каталога:
+	
+		
+		- Добавляем пользователя:
+		
+			useradd procode -m -d /var/www/procode ;
+			
+			passwd procode ;
+			
+			chown -R procode:www-data /var/www/procode
+			
+		- Добавляем каталоги:
+		
+			mkdir /var/www/procode/sites 
+			
+			mkdir /var/www/procode/sites/procode
+			
+			mkdir /var/www/procode/sites/procode/public
+			
+			sudo chown -R procode:www-data /var/www/procode
+			
+		- Файл конфигурации виртуального хоста:
+			
+			sudo nano /etc/apache2/sites-available/your_domain.conf :
+			
+				<VirtualHost *:80>
+					ServerAdmin webmaster@localhost
+					ServerName your_domain
+					ServerAlias www.your_domain
+					DocumentRoot /var/www/your_domain
+					ErrorLog ${APACHE_LOG_DIR}/error.log
+					CustomLog ${APACHE_LOG_DIR}/access.log combined
+				</VirtualHost>
+				
+			включим файл с помощью a2ensite -> sudo a2ensite your_domain.conf ;
+			
+			выключим сайт по умолчанию, определенный в 000-default.conf -> sudo a2dissite 000-default.conf
+			
+		- Тест работоспособности:
+		
+			создаем страницу для теста -> sudo nano /var/www/your_domain/index.html :
+			
+					<html>
+						<head>
+							<title>Welcome to Your_domain!</title>
+						</head>
+						<body>
+							<h1>Success!  The your_domain virtual host is working!</h1>
+						</body>
+					</html>
+		
+		
+		
+3. PHP, MySQL:
+
+	sudo apt install mysql-server mysql-client ,
+	
+	sudo apt install php-mysql phpmyadmin ,
+	
+	sudo apt install libapache2-mod-php8.1 ,
+	
+	sudo systemctl enable mysql ,
+	
+	sudo systemctl start mysql ,
+	
+	sudo systemctl status mysql
+	
+	добавить в файл    /etc/apache2/apache2.conf    строку -> Include /etc/phpmyadmin/apache.conf
+	
+	sudo systemctl restart apache2 .
+
+	
+Создание БД:
+
+	Подключение по SSH :
+
+		mysql -u root;
+		
+		mysql> CREATE DATABASE django_db;
+		
+		mysql> CREATE USER 'django_user'@'localhost' IDENTIFIED BY 'Пароль_для_Входа';
+		
+		mysql> GRANT ALL ON django_db.* TO 'django_user'@'localhost';
+		
+		mysql> FLUSH PRIVILEGES;
+		
+		mysql> EXIT
+		
+		
+		
+		
+	Комманды MySQL:
+
+		Вывод всех пользователей:
+		
+			mysql> SELECT User,Host FROM mysql.user;
+			
+		Удаление пользователя:
+		
+			DROP USER 'django_user'@'localhost';
+		
+		Просмотр всех БД:
+		
+			SHOW DATABASES;
+			
+		Удаление БД:
+		
+			DROP DATABASE procode;
+		
+		 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

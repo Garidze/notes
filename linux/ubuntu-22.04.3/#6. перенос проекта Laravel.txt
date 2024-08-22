@@ -1,0 +1,112 @@
+Подготовка:
+
+	Включаем модуль rewrite:
+
+		sudo a2enmod rewrite
+			
+	Редактируем файл - /etc/apache2/sites-available/procode.conf:
+
+		<VirtualHost *:80>
+			ServerName procodeinfo
+			ServerAlias procode.info www.procode.info
+			ServerAdmin admin@localhost
+			DocumentRoot /var/www/procode/public
+			<Directory /var/www/procode>
+				AllowOverride All
+			</Directory>
+			ErrorLog ${APACHE_LOG_DIR}/error.log
+			CustomLog ${APACHE_LOG_DIR}/access.log combined
+		</VirtualHost>
+		
+		включим файл с помощью a2ensite -> sudo a2ensite your_domain.conf ;
+		
+		выключим сайт по умолчанию, определенный в 000-default.conf -> sudo a2dissite 000-default.conf
+
+		
+	Перезагружаем apache:
+		
+		sudo systemctl restart apache2
+
+
+
+
+1. Перекидываем проект;
+
+
+2. Установка npm:
+
+	- sudo apt install npm
+	
+	- npm i
+
+	
+3. Установка пакетов composer:
+
+	- apt install composer
+
+	- composer install
+	
+	
+	
+4. Возможные ошибки:
+
+	The stream or file "/var/www/procode/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied:
+		OR
+	file_put_contents(/var/www/procode/storage/framework/sessions/uWvWI1afBnzcNK1qq1qKT4wya7PnexNWYZ72zSNb): Failed to open stream: Permission denied:
+
+		chmod -R gu+w storage
+
+		chmod -R guo+w storage
+
+		php artisan cache:clear
+	
+	
+	
+6. Перезапись символьных ссылок:
+
+	rm public/storage
+	php artisan optimize:clear
+	php artisan storage:link
+	
+	
+	
+7. php artisan migrate
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

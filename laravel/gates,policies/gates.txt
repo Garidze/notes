@@ -1,0 +1,131 @@
+1. Defining gates:
+
+	App\Providers\AuthServiceProvider:
+	
+		use Illuminate\Support\Facades\Gate;
+		public function boot()
+		{
+		
+			$this->registerPolicies();
+			
+			Gate::define('is-admin', function (User $user) {
+				return $user->roles()->where('name','Admin')->count() > 0;
+			});
+			
+			#.1:
+			Gate::define('can-user-crud', function (User $user, $id){
+				return $user->id == Post::findOrFail($id)->user_id
+					? Response::allow()
+					: Response::denyAsNotFound();
+					//: Response::denyWithStatus(404);
+			});
+			
+			#.2:
+			Gate::define('can-user-crud', function (User $user, Post $post){
+				return $user->id == $post->user_id
+					? Response::allow()
+					: Response::denyAsNotFound();
+					//: Response::denyWithStatus(404);
+			});
+			
+			#.3(universal):
+			Gate::define('can-user-crud', function (User $user, $model, $id){
+				return $user->id == $model::findOrFail($id)->user_id
+					? Response::allow()
+					: Response::denyAsNotFound();
+			})
+			
+		}
+	
+	
+		
+2. Using gates:
+
+	In routes(web.php):
+	
+		#.1:
+		Route::put('post/edit', [PostController::class, 'edit'])->name('post.edit')->middleware('can:can-user-crud,id');
+		
+		
+		
+	In controller:
+		
+		public function edit($id)
+		{
+		
+			#.1:
+			
+				$this->authorize('can-user-crud', $id);
+			
+			#.2:
+			
+				$post = Post::findOrFail($id);
+				$this->authorize('can-user-crud', $post);
+				
+			#.3(universal):
+			
+				$this->authorize('canEditUpdateDestroy', [PostController::class, $id]);
+				
+
+			//----------------
+			
+			if (Gate::allows('update-post')) {
+
+				dd('Allowed');
+
+			} else {
+
+				dd('Not allowed');
+
+			}
+
+		}
+		
+		
+		
+	In policies:
+	
+		public function update(User $user, Post $post): bool
+		{
+		
+			return $user->id === $post->user_id || Gate::check('is-admin');
+			
+		}
+		
+	In blade templade:
+	
+		@can('update-post')
+			<!-- The current user can update the post... -->
+		@elsecan('create', App\Models\Post::class)
+			<!-- The current user can create new posts... -->
+		@else
+			<!-- ... -->
+		@endcan
+		 
+		@cannot('update-post')
+			<!-- The current user cannot update the post... -->
+		@elsecannot('create', App\Models\Post::class)
+			<!-- The current user cannot create new posts... -->
+		@endcannot
+		
+		@if (Auth::user()->can('update-post'))
+			<!-- The current user can update the post... -->
+		@endif
+		 
+		@unless (Auth::user()->can('update-post'))
+			<!-- The current user cannot update the post... -->
+		@endunless
+
+
+
+
+
+
+
+
+
+
+
+
+
+

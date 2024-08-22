@@ -1,0 +1,13 @@
+<select class="form-control form-control-sm @error('categoriesList') border border-danger @enderror" name="categoriesList">
+	@if(request()->query('categoriesList'))
+		<option value="{{ null }}">-- {{ __('titles.categories_select') }}</option>
+		@foreach($categories as $category)
+			<option value="{{ $category->id }}" @selected($category->id == request()->query('categoriesList'))>{{ $category->name }}</option>
+		@endforeach
+	@else
+		<option value="{{ null }}">-- {{ __('titles.categories_select') }}</option>
+		@foreach($categories as $category)
+			<option value="{{ $category->id }}">{{ $category->name }}</option>
+		@endforeach
+	@endif
+</select>

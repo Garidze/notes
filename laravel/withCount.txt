@@ -1,0 +1,12 @@
+1. Controller: 
+
+	public function index()
+	{
+		return view('posts.index', ['posts' => Post::withCount('comments)->all()]);
+	}
+	
+2. View:
+	
+	@foreach($posts as $post)
+		{{ $post->comments_count }}
+	@end foreach

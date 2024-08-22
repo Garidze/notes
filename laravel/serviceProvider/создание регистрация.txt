@@ -1,0 +1,132 @@
+На примере Dadata.
+
+Устанавливается пакет Dadata:
+	composer require hflabs/dadata
+	
+1. View:
+	
+	<form method="post" action="{{ route('address.parse') }}">
+		<input name="address"></input>
+        <button class="btn btn-success mt-3">Send</button>
+    </form>
+	
+2. web.php:
+
+	Route::controller(Address::class)->group(function(){
+        Route::get('/address', 'form')->name('address.form');
+        Route::post('/address', 'parse')->name('address.parse');
+    });
+	
+3. Controller:
+
+	-#-#-#-#-#-Простое использование-#-#-#-#-#-
+		
+		use Dadata/DadataClient;
+		
+		class Address extends Controller
+		{
+			public function form(){
+				return view('address.form');
+			}
+
+			public function parse(Request $request){
+				$token='389ufj9348urfj9384ujf';
+				$secret='lks5j3l4k5j3lkj4kl5jr5wfdc';
+				$dadata= new DadataClient($token, $secret);
+				//$dadata= new DadataClient(config(dadata.token), config(dadata.secret)); //см. ниже
+				$response = $dadata->clean($request->address);
+				dd($response);
+				return view('some-view', $response);
+			}
+		}
+	
+	-#-#-#-#-#-END Простое использование-#-#-#-#-#-
+
+
+
+
+	-#-#-#-#-#-С зарегистрированным service provider-#-#-#-#-#-
+	
+		a. config/dadata.php:
+		
+			<?php
+
+			return [
+				'token' => env('DADATA_TOKEN'),
+				'secret' => env('DADATA_SECRET')
+			];
+			
+		b. .env:
+		
+			DADATA_TOKEN=389ufj9348urfj9384ujf
+			DADATA_SECRET=lks5j3l4k5j3lkj4kl5jr5wfdc
+			
+		c. Создать провайдер - php artisan make:provider DadataServiceProvider
+		
+			app/providers/DadataServiceProvider.php:
+		
+				use Dadata\DadataClient;
+				
+				public function register()
+				{
+					//$this->app->bind();
+					$this->app->singleton(DadataClient::class, function(){
+						return new DadataClient(config('dadata.token'), config('dadata.secret'));
+					});
+				}
+				
+		d. Регистрация провайдера:
+		
+			confog/app.php:
+			
+				'providers' => [
+					Illuminate\Auth\AuthServiceProvider::class,
+					...,
+					...,
+					App\Providers\DadataServiceProvider::class,
+				],
+		
+		e. Controller:
+		
+			use Dadata/DadataClient;
+		
+			class Address extends Controller
+			{
+				public function form(){
+					return view('address.form');
+				}
+
+				public function parse(Request $request, DadataClient $dadata){
+					$response = $dadata->clean('address', $request->address);
+					dd($response);
+					return view('address.result');
+				}
+			}
+	
+	-#-#-#-#-#-END С зарегистрированным service provider-#-#-#-#-#-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

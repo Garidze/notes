@@ -1,0 +1,143 @@
+1. php artisan vendor:publish --tag=laravel-pagination
+
+	публикация папки по адресу: 
+	
+		resources/views/vendor/pagination
+		
+2. Controller:
+
+	public function index()
+    {
+        return view('post.index', ['posts'=>Post::with(['user', 'categories'])->orderByDesc('created_at')->paginate(6)]);
+    }
+	
+3. View:
+
+	{{ $posts->onEachSide(2)->links('vendor.pagination.paginate') }}
+	
+4. resources/views/vendor/pagination/paginate.blade.php:
+
+	@if ($paginator->hasPages())
+
+		<div class="paginate">
+
+			{{-- Previous Page Link --}}
+			<div class="paginate__prev">
+				@if ($paginator->onFirstPage())
+					<a class="disabled">&lsaquo;</a>
+				@else
+					<a href="{{ $paginator->previousPageUrl() }}">&lsaquo;</a>
+				@endif
+			</div>
+
+			{{-- Pagination Elements --}}
+			<div class="paginate__links">
+				@foreach ($elements as $element)
+
+					{{-- "Three Dots" Separator --}}
+					@if (is_string($element))
+						<span>{{ $element }}</span>
+					@endif
+
+					{{-- Array Of Links --}}
+					@if (is_array($element))
+						@foreach ($element as $page => $url)
+							@if ($page == $paginator->currentPage())
+								<a class="active">{{ $page }}</a>
+							@else
+								<a href="{{ $url }}">{{ $page }}</a>
+							@endif
+						@endforeach
+					@endif
+				@endforeach
+
+			</div>
+
+			{{-- Next Page Link --}}
+			<div class="paginate__next">
+				@if ($paginator->hasMorePages())
+					<a href="{{ $paginator->nextPageUrl() }}">&rsaquo;</a>
+				@else
+					<a class="disabled">&rsaquo;</a>
+				@endif
+			</div>
+
+		</div>
+
+	@endif
+	
+	
+5. SCSS:
+
+	// pagination
+	
+	.paginate {
+		display: flex;
+		&__prev, &__links, &__next {
+			display: flex;
+			a {
+				color: var(--col-b);
+				padding: 6px;
+				border: 1px solid var(--col-2);
+				background: var(--col-w);
+			}
+			.disabled, .active {
+				pointer-events: none;
+				color: var(--col-1)
+			}
+		}
+		&__links {
+			margin: 0 var(--pgn-link-margin) 0 var(--pgn-link-margin);
+			a {
+				margin-right: var(--pgn-link-margin);
+				&:last-child {
+					margin-right: 0;
+				}
+			}
+		}
+	}
+	
+	// end pagination
+
+
+
+
+#############################################################################
+
+public function filter(ProductFilterRequest $request)
+{
+	$data = $request->processedData();
+
+	$products = app(\Illuminate\Pipeline\Pipeline::class)
+		->send(Product::query()->with('category'))
+		->through([
+			\App\Filters\ProductByDate::class,
+			\App\Filters\ProductByName::class,
+		])
+		->thenReturn()
+		->paginate(10)
+		->appends(['startTime' => $data['startTime'] ?? '', 'endTime' => $data['endTime'] ?? '', 'searchByName' => $data['searchByName'] ?? '']);
+
+	return view('admin.product.filter-result', compact('products'));
+    }
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

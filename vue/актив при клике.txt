@@ -1,0 +1,21 @@
+<button
+		v-for="(i, n) in 5"
+		@click="buttonActive(n)"
+		:class="{active: n == currentActive}"
+		:key = n
+>{{ n + 1 }}</button>
+
+
+let app = Vue.createApp({
+    data: () => ({
+        currentActive: 0,
+    }),
+    methods: {
+        buttonActive(n) {
+            this.currentActive = n;
+            console.log(n);
+        }
+    },
+
+})
+app.mount('#app')

@@ -1,0 +1,99 @@
+https://swiperjs.com/vue
+
+1. npm i swiper
+
+
+2. vue component:
+	
+		<template>
+			<swiper
+				:modules="modules"
+				:slides-per-view="1"
+				:space-between="10"
+				navigation
+				:autoplay="{ delay: 1000 }"
+				:loop="true"
+				:pagination="{ clickable: true }"
+				:scrollbar="{ draggable: true }"
+				@swiper="onSwiper"
+				@slideChange="onSlideChange"
+			>
+				<swiper-slide v-for="sliderImage in imgArray">
+					<img :src="'../../storage/' + sliderImage" alt="image">
+				</swiper-slide>
+			</swiper>
+		</template>
+	
+		<script>
+			// import Swiper core and required modules
+			import { Navigation, Pagination, Scrollbar, Autoplay } from 'swiper/modules';
+			// Import Swiper Vue.js components
+			import { Swiper, SwiperSlide } from 'swiper/vue';
+
+			// Import Swiper styles
+			import 'swiper/css';
+			import 'swiper/css/navigation';
+			import 'swiper/css/pagination';
+			import 'swiper/css/scrollbar';
+			import 'swiper/css/autoplay';
+
+			export default {
+			
+				components: {
+					Swiper,
+					SwiperSlide,
+				},
+				
+				props: {
+					//
+				},
+				
+				data() {
+					swiper: null,
+				},
+				
+				methods: {
+					onSwiper(swiper) {
+						this.swiper = swiper;
+					},
+				},
+				
+				setup() {
+					const onSlideChange = () => {
+						console.log('slide change');
+					};
+					return {
+						onSlideChange,
+						modules: [Navigation, Pagination, Scrollbar, Autoplay],
+					};
+				},
+				
+			}
+		</script>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

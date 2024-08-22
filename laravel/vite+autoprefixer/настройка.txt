@@ -1,0 +1,50 @@
+1. npm i autoprefixer ;
+
+
+2. npm i postcss ;
+
+
+3. vite.config.js:
+
+	import { defineConfig } from 'vite';
+	import laravel from 'laravel-vite-plugin';
+	import autoprefixer from "autoprefixer";
+
+	export default defineConfig({
+		plugins: [
+			laravel({
+				input: ['resources/sass/app.scss'],
+				refresh: true,
+				postcss: {
+					plugins: [
+						autoprefixer(),
+					]
+				},
+			}),
+		],
+	});
+	
+	
+4. postcss.config.js:
+
+	export default {
+		plugins: {
+			autoprefixer: {},
+		},
+	};
+	
+	
+5. package.json:
+	
+	...,
+    "dependencies": {
+        "autoprefixer": "^10.4.19",
+        "postcss": "^8.4.38"
+    },
+    "browserslist": [
+        "last 8 versions"
+    ]
+
+
+
+	

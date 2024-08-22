@@ -1,0 +1,50 @@
+-----index.js-----
+
+import { createStore } from 'vuex'
+import catalog from "./catalog.js";
+
+export default createStore({
+  modules: { catalog },
+  strict: process.env.NODE_ENV !== 'production'
+})
+
+--------------------
+
+
+
+-----catalor.js-----
+
+export default {
+    namespaced: true,
+    state: {
+        test: 'Catalog test'
+    },
+    getters: {
+    },
+    mutations: {
+    },
+    actions: {
+    }
+}
+
+--------------------
+
+{{ $store.state.catalog.test }}
+
+{{ $store.getters['catalog/all'] }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

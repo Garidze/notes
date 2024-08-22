@@ -1,0 +1,6 @@
+
+
+public function test()
+{
+	dd(Country::query()->inRandomOrder()->value('Name')); // случайная запись из Name
+}

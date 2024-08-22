@@ -1,0 +1,71 @@
+1. Компонент:
+
+	a:
+
+		<form {{ $attributes }}>
+		
+			{{ $slot }}
+			
+		</form>
+		
+		
+	b: 
+	
+		<button {{ $attributes->merge('type' => 'button') }}
+		
+	c:
+	
+		<input {{ $attributes->class(['inputClass'])->merge(['type' => 'text', 'value' => old($attributes->get('name'))]) }} >
+		
+		@error($attributes->get('name'))
+			<small style="color:red;">*{{ $message }}</small>
+		@enderror
+		
+	d:
+	
+		<input type="checkbox" {{ $attributes->merge(['checked' => !! old($attributes->get('name'))]) }}>
+	
+		
+	
+	
+2. Вставка компонента:
+
+	a:
+	
+		<x-form action="{{ route=('login.attempt') }}" method="POST">
+		
+			...
+		
+		</x-form>
+		
+	b: 
+	
+		<x-button type="submit" class="btn btn-primary"></button>
+		
+		
+	c:
+	
+		<x-test.test-input name="inputText" />
+		
+	d:
+	
+		<x-checkbox name="agreement" :checked="!! old($attributes->get('agreement'))"
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

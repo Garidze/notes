@@ -1,0 +1,26 @@
+[Дмитрий Лаврик] Фреймворк Laravel (2022)
+Урок 2: -00:37 примерное время;
+
+Валидация в Request:
+
+public function rules()
+{
+	return [
+		'name' => 'required|unique:categories,name,' . $this->category, //PUT|PATCH categories/{category} ... categories.update
+		'description' => 'required',
+	];
+}
+
+$this->category - ключ id в SQL, который игнорируется при проверке на уникальность
+---------------------------------------------------------------------------------------------------
+
+Route::resource('posts', PostController::class)->parameters(['posts' => 'id']);
+Если переопределено в роутах, то указываем:
+
+		public function rules()
+		{
+			return [
+				'name' => 'required|unique:categories,name,' . $this->id, //PUT|PATCH categories/{id} ... categories.update
+				'description' => 'required',
+			];
+		}

@@ -1,0 +1,139 @@
+//HTML-------------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    @@include('html/basic_settings/head.html', {
+    "styleSrc":"main.min.css",
+    "title":"Главная"
+    })
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="wrapper">
+    <div class="content" id="app">
+        <div class="section">
+            <div class="c-container">
+                <div class="section__body">
+                    <form action="#">
+                        <app-form-field
+                                v-for="(i,n) in info"
+                                :value="i.value"
+                                :label ="i.label"
+                                :key ="n"
+                                :valid="i.valid"
+                                my-class="red"
+                                @update="onUpdate($event,n)"
+                        ></app-form-field>
+
+                        <button type="button" :disabled="!isActive">Send</button>
+                    </form>
+                    <br>
+                    {{ isActive }}
+                    <br>
+                    <pre>{{ info }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<script src="files/vue.global.prod.js"></script>-->
+<script src="https://unpkg.com/vue@next"></script>
+<script src="js/app.min.js"></script>
+</body>
+</html>
+
+
+//JS---------------------------------------------------
+import  * as flsFunctions from "./modules/functions.js";
+
+flsFunctions.isWebp();
+
+// vue
+// Components
+let AppFormField = {
+    props: {
+        label: {type: String, default: 'Unset'},
+        value: {type: String, required: true},
+        valid: {type: Boolean},
+        myClass: {type: String}
+    },
+    data() {
+        return {
+            activated: this.value != '',
+        }
+    },
+    methods: {
+        onInput(e) {
+            this.activated = true;
+            this.$emit('update', e.target.value);
+        }
+    },
+    // computed: {
+    //   nameHandler() {
+    //       return this.label.split(' ').join('').toLowerCase();
+    //   }
+    // },
+    template: `<div class="formItem">
+                    <div class="formItemWrap">
+                        <label :class="myClass">{{ label }}</label>
+                        <template v-if="activated">
+                            <div class="formItemIcon" :class="valid ? '_icon-check-circle' : '_icon-exclamation-circle'"></div>
+                        </template>
+                    </div>
+                    <input type="text" @input="onInput">
+                </div>`
+}
+// END Components
+
+let practice = Vue.createApp({
+    components: {
+        AppFormField
+    },
+    data() {
+        return {
+            info: [
+                {
+                    label: 'Name',
+                    value: '',
+                    pattern: /^[a-zA-Z]{2,30}$/
+                },
+                {
+                    label: 'Phone',
+                    value: '',
+                    pattern: /^[0-9]{7,14}$/
+                },
+                {
+                    label: 'Email',
+                    value: '',
+                    pattern: /.+/
+                },
+                {
+                    label: 'Some field',
+                    value: '',
+                    pattern: /.+/
+                },
+            ]
+
+        }
+    },
+    methods: {
+        onUpdate(elem, n) {
+            let currField = this.info[n]
+            currField.value = elem.trim();
+            currField.valid = currField.pattern.test(currField.value);
+        }
+    },
+    computed: {
+        isActive() {
+            return this.info.every(e => e.valid);
+        }
+    },
+    created() {
+        this.info.forEach((i) => {
+            i.valid = false;
+            i.activated = false;
+        })
+    }
+})
+practice.mount('#app')
+// end vue

@@ -1,0 +1,40 @@
+<div class="accItem" v-for="(i,n) in dataAccordion">
+	<div class="accBtn" @click="isOpen = !isOpen">
+		<h4>Title</h4>
+	</div>
+	<transition
+			@before-enter="accProcessClose"
+			@enter="accProcessOpen"
+			@before-leave="accProcessOpen"
+			@leave="accProcessClose"
+	>
+		<div class="accBlock" v-if="isOpen">
+			<div class="accBlockContent">
+				<p>Text</p>
+			</div>
+		</div>
+	</transition>
+</div>
+
+const app = Vue.createApp({
+  data() {
+      return {
+          isOpen: false,
+      }
+  },
+  methods: {
+      accProcessClose(el) {
+          el.style.height = '0px'
+      },
+      accProcessOpen(el) {
+          el.style.height = el.scrollHeight + 'px'
+      }
+  },
+  computed: {
+
+  },
+  mounted() {
+
+  },
+})
+app.mount('#app')

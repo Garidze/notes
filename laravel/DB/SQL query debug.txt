@@ -1,0 +1,8 @@
+app/Providers/AppServiceProvider.php:
+
+    public function boot()
+    {
+        DB::beforeExecuting(function ($query) {
+            echo "<pre>$query</pre>";
+        });
+    }
