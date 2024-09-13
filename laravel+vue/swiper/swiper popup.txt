@@ -119,15 +119,6 @@
 				justify-content: center;
 				align-items: center;
 
-				.modal-content {
-					max-width: 450px;
-					margin-bottom: 10%;
-					@media screen and (max-width: 480px) {
-						margin: 0 15px;
-						margin-bottom: 20%;
-					}
-				}
-
 				.imagePopup {
 					width: calc(100% - 20px);
 					height: calc(100vh - 20px);
