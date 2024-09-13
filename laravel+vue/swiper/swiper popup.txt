@@ -142,7 +142,7 @@
 					transition: 0.2s;
 
 					&:hover {
-						border: 2px solid rgba(255, 255, 255, 1);
+						border: 2px solid rgba(131, 131, 131, 1);
 						color: rgba(255, 255, 255, 1);
 					}
 				}
@@ -201,12 +201,25 @@
 				}
 
 				.swiper-button-prev, .swiper-button-next {
-					color: rgba(255, 255, 255, 0.8);
-					transition: 0.2s;
-
-					&:hover {
-						color: rgba(255, 255, 255, 1);
+					&:after {
+						color: rgba(255, 255, 255, 0.8);
+						transition: 0.2s;
+						padding: 24px 8px;
+						background: rgba(135,135,135,.4);
 					}
+
+					&:hover:after {
+						color: rgba(255, 255, 255, 1);
+						background: rgba(135,135,135,1);
+					}
+				}
+
+				.swiper-button-prev:after {
+					border-radius: 6px 0 0 6px;
+				}
+
+				.swiper-button-next:after {
+					border-radius: 0 6px 6px 0;
 				}
 			}
 		</style>
