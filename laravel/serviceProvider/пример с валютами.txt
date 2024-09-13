@@ -1,15 +1,20 @@
-1. Interface CurrencyHandlerInterface:
+1. Interface CurrencyApiContract:
 
 	<?php
 
-		namespace App\Services\Contracts;
+		namespace App\Services\Contracts\Currency;
 
-		interface CurrencyHandlerInterface
+		use App\Services\Currency\CurrencyManager;
+
+		interface CurrencyApiContract
 		{
-			public function setDefaultCurrency();
+			public function apiCurrencyCache($cacheKey);
 
-			public function clearDefaultCurrency();
+			public function apiCurrencyCacheGet($cacheKey);
 
+			public function apiCurrencyCacheForget($key);
+
+			public function currencyRate($currencyKey);
 		}
 		
 		
@@ -17,25 +22,23 @@
 
 	<?php
 
-		namespace App\Services\Currencies;
+		namespace App\Services\Currency;
 
-		use App\Enums\Currencies;
-
-		class BaseCurrency
+		class CurrencyApiBasic
 		{
-			public function setDefaultCurrency($defaultCurrency = 'BYN')
+			public function __construct(protected CurrencyManager $manager){}
+
+			public function apiCurrencyCacheGet($cacheKey = 'allCurrency') // return collection OR null
 			{
-				$defaultCurrency = Currencies::tryFrom($defaultCurrency) ? $defaultCurrency : 'BYN';
-				if(!session()->has('currentCurrency')) {
-					session(['currentCurrency' => $defaultCurrency]);
-				}
-				return session('currentCurrency');
+				return cache($cacheKey);
 			}
 
-			public function clearDefaultCurrency()
+			public function apiCurrencyCacheForget($key)
 			{
-				if(session()->has('currentCurrency')) session()->forget('currentCurrency');
+				cache()->forget($key);
 			}
+
+
 		}
 		
 		
@@ -43,57 +46,158 @@
 
 	<?php
 
-		namespace App\Services\Currencies;
+		namespace App\Services\Currency\NBRB;
 
-		use App\Services\Contracts\CurrencyHandlerInterface;
-		use App\Services\Currencies\BaseCurrency;
+		use App\Services\Contracts\Currency\CurrencyApiContract;
+		use App\Services\Currency\CurrencyApiBasic;
+		use Illuminate\Support\Carbon;
+		use Illuminate\Support\Facades\Http;
 
-		class CurrencyNBRBHandler extends BaseCurrency implements CurrencyHandlerInterface
+		class CurrencyApiNBRB extends CurrencyApiBasic implements CurrencyApiContract
 		{
+			public function apiCurrencyCache($cacheKey = 'allCurrency')
+			{
+				/*https://api.nbrb.by/exrates/rates?periodicity=0  - курысы всех валют на текущюю дату*/
+				/*https://api.nbrb.by/exrates/currencies  - перечень всех валют с кодами*/
+				/*https://api.nbrb.by/exrates/currencies/456  - информация о валюте по коду*/
+				/*https://api.nbrb.by/exrates/rates/456  - курс валюты относительно бел. рубля по коду и на текущюю дату*/
+
+				$ttl = Carbon::tomorrow()->addHour(6)->diffInRealSeconds(Carbon::now());
+
+				try {
+					if(!cache()->has($cacheKey)) {
+						$data = collect(Http::withOptions(['proxy' => '192.168.7.181:3128'])->get('https://api.nbrb.by/exrates/rates?periodicity=0')->json())->keyBy('Cur_Abbreviation');
+						cache([$cacheKey => $data], $ttl);
+					}
+
+					return cache($cacheKey);
+
+				} catch (\Throwable $e) {
+					cache([$cacheKey => null], now()->addMinute(15));
+
+					return cache($cacheKey);
+				}
+			}
+
+			public function currencyRate($currencyKey) // 3.5609 / 100
+			{
+				$currencyData = $this->apiCurrencyCacheGet();
+
+				$currencyKey = $this->manager->currencyGet($currencyKey);
+
+				if(!$currencyData || $currencyKey == $this->manager::DEFAULT) return 1;
+
+				$currencyCurrent = $currencyData[$currencyKey];
+
+				return ($currencyCurrent['Cur_OfficialRate'] / $currencyCurrent['Cur_Scale']);
+			}
 
 		}
+
 		
 		
-4. 
-		
-		
-5. Сервис провайдер CurrencyHandlerServiceProvider:
+4. Класс заглушка:
 
 	<?php
 
-		namespace App\Providers;
+		namespace App\Services\Currency\Stub;
 
-		use App\Services\Contracts\CurrencyHandlerInterface;
-		use App\Services\Currencies\CurrencyNBRBHandler;
-		use Illuminate\Foundation\Application;
-		use Illuminate\Support\ServiceProvider;
+		use App\Services\Contracts\Currency\CurrencyApiContract;
+		use App\Services\Currency\CurrencyApiBasic;
 
-		class CurrencyHandlerServiceProvider extends ServiceProvider
+		class CurrencyStub extends CurrencyApiBasic implements CurrencyApiContract
 		{
-		
-			public function register(): void
+			public function apiCurrencyCache($cacheKey = 'allCurrency')
 			{
-				$this->app->bind(CurrencyHandlerInterface::class, function (Application $app) {
-				
-				
-					return new CurrencyNBRBHandler(); // Когда нужна другая реализация, создается и заменяется здесь другим классом
-					
-					
-				});
+				cache([$cacheKey => null]);
+
+				return cache($cacheKey);
 			}
 
-			public function boot(): void
+			public function currencyRate($currencyKey = 1):int
 			{
-				//
+				return 1;
 			}
+
 		}
 		
 		
-5. Пример использования в AppServiceProvider.php:
+5. MIDDLEWARE:
 
-    public function boot(CurrencyHandlerInterface $currencyHandlerInterface): void
-    {
+	<?php
 
-        View::share('currentCurrency', $currencyHandlerInterface->setDefaultCurrency());
+		namespace App\Http\Middleware;
 
-    }
+		use App\Services\Contracts\Currency\CurrencyApiContract;
+		use App\Services\Currency\CurrencyCurrentManager;
+		use Closure;
+		use Illuminate\Http\Request;
+		use Symfony\Component\HttpFoundation\Response;
+		use Illuminate\Support\Facades\View;
+
+		class CurrencyMiddleware
+		{
+			public function __construct(protected CurrencyApiContract $apiContract, protected CurrencyCurrentManager $manager)
+			{
+			}
+
+			/**
+			 * Handle an incoming request.
+			 *
+			 * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
+			 */
+			 
+			public function handle(Request $request, Closure $next): Response
+			{
+
+				$this->apiContract->apiCurrencyCache();
+
+				/*$this->manager->forget();
+				cache()->flush();*/
+
+				$this->manager->setDefault();
+
+				View::share('currentCurrency', $this->manager->get());
+
+				return $next($request);
+			}
+		}
+
+		
+		
+5. Пример использования в контроллере:
+
+	<?php
+
+	namespace App\Http\Controllers\Admin\Product;
+
+	use App\Http\Controllers\Controller;
+	use App\Http\Requests\Product\ProductRequest;
+	use App\Models\Category;
+	use App\Models\Product;
+	use App\Services\Contracts\Currency\CurrencyApiContract;
+	use App\Services\Currency\CurrencyCurrentManager;
+	use App\Services\ImageActions;
+	use App\Services\PaginateCollection;
+	use App\Services\ProductFirstDateCache;
+
+
+	class ProductController extends Controller
+	{
+	
+		public function __construct(protected CurrencyApiContract $apiContract, protected CurrencyCurrentManager $manager){}
+
+		public function index()
+		{
+			$product = Product::all();
+
+
+			$product->transform(function ($item, $key) {
+				$item->price = number_format($item->price / $this->apiContract->currencyRate($this->manager->get()), 2,'.', '');
+				return $item;
+			});
+
+			$products = PaginateCollection::paginate($productCollection);
+
+			return view('admin.product.index', compact('products'));
+		}
