@@ -1,110 +1,30 @@
-1. php artisan make:mail TestMail
+<!--##### ПРИМЕР ИСПОЛЬЗОВАНИЯ ПЕРЕМЕННЫХ #####-->
+
+{{--<!DOCTYPE html>--}}
+{{--<html>--}}
+
+{{--<head>--}}
+{{--    <title>Laravel Mail</title>--}}
+{{--</head>--}}
+
+{{--<body>--}}
+
+{{--<h1>{{ $data['title'] }}</h1>--}}
+
+{{--<p>{{ $data['body'] }}</p>--}}
+
+{{--<p>Thank you</p>--}}
+
+{{--</body>--}}
+
+{{--</html>--}}
 
 
+<!--##### ШАБЛОН ПИСЬМА #####-->
 
-2.app/Mail/TestMail.php:
-
-	namespace App\Mail;
-
-	use Illuminate\Bus\Queueable;
-	use Illuminate\Contracts\Queue\ShouldQueue;
-	use Illuminate\Mail\Mailable;
-	use Illuminate\Mail\Mailables\Content;
-	use Illuminate\Mail\Mailables\Envelope;
-	use Illuminate\Queue\SerializesModels;
-
-	class TestMail extends Mailable
-	{
-		use Queueable, SerializesModels;
-
-		public $data;
-		
-		public function __construct($data)
-		{
-			$this->data = $data;
-		}
-
-		/**
-		 * Get the message envelope.
-		 */
-		public function envelope(): Envelope
-		{
-			return new Envelope(
-				subject: 'Test Mail fg',
-			);
-		}
-
-		/**
-		 * Get the message content definition.
-		 */
-		public function content(): Content
-		{
-			return new Content(
-				view: 'test-mail',
-			);
-		}
-
-		/**
-		 * Get the attachments for the message.
-		 *
-		 * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-		 */
-		public function attachments(): array
-		{
-			return [];
-		}
-	}
-	
-	
-3. Controller:
-     
-	public function index()
-    {
-        Mail::to('fire9988point@gmail.com')->send(new TestMail([
-            'title' => 'TITLE',
-            'body' => 'BODY'
-        ]));
-		
-		OR
-		
-		Mail::to(User::find(1)->email)->send(new TestMail([
-            'title' => 'TITLE',
-            'body' => 'BODY'
-        ]));	
-    }
-	
-	
-	
-4. resources/views/test-mail.blade.php:
-
-
-	<!--##### ПРИМЕР ИСПОЛЬЗОВАНИЯ ПЕРЕМЕННЫХ #####-->
-	
-	<!DOCTYPE html>
-	<html>
-	
-		<head>
-			<title>Laravel Mail</title>
-		</head>
-		
-		<body>
-		
-			<h1>{{ $data['title'] }}</h1>
-			
-			<p>{{ $data['body'] }}</p>
-			
-			<p>Thank you</p>
-		
-		</body>
-		
-	</html>
-
-
-	<!--##### ШАБЛОН ПИСЬМА #####-->
-
-	<!doctype html>
-	<html lang="en">
-	<head>
+<!doctype html>
+<html lang="en">
+<head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Simple Transactional Email</title>
@@ -404,77 +324,74 @@
             }
         }
     </style>
-	</head>
-	<body>
-		<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
-			<tr>
-				<td>&nbsp;</td>
-				<td class="container">
-					<div class="content">
+</head>
+<body>
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+    <tr>
+        <td>&nbsp;</td>
+        <td class="container">
+            <div class="content">
 
-						<!-- START CENTERED WHITE CONTAINER -->
-						<span class="preheader">This is preheader text. Some clients will show this text as a preview.</span>
-						<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="main">
+                <!-- START CENTERED WHITE CONTAINER -->
+                <span class="preheader">This is preheader text. Some clients will show this text as a preview.</span>
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="main">
 
-							<!-- START MAIN CONTENT AREA -->
-							<tr>
-								<td class="wrapper">
-									<p style="font-weight:600;font-size:20px;">Hi there!!!</p>
-									<p>Sometimes you just want to send a simple HTML email with a simple design and clear call to action. This is it.</p>
-									<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
-										<tbody>
-										<tr>
-											<td align="left">
-												<table role="presentation" border="0" cellpadding="0" cellspacing="0">
-													<tbody>
-													<tr>
-														<td>
-															<!-- BUTTON LINK -->
-															<a href="http://htmlemail.io" target="_blank">Call To Action</a>
-															<!-- END BUTTON LINK -->
-														</td>
-													</tr>
-													</tbody>
-												</table>
-											</td>
-										</tr>
-										</tbody>
-									</table>
-									<p>This is a really simple email template. It's sole purpose is to get the recipient to click the button with no distractions.</p>
-									<p>Good luck! Hope it works.</p>
-								</td>
-							</tr>
+                    <!-- START MAIN CONTENT AREA -->
+                    <tr>
+                        <td class="wrapper">
+                            <p style="font-weight:600;font-size:20px;">Hi there!!!</p>
+                            <p>Sometimes you just want to send a simple HTML email with a simple design and clear call to action. This is it.</p>
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+                                <tbody>
+                                <tr>
+                                    <td align="left">
+                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    <!-- BUTTON LINK -->
+                                                    <a href="http://htmlemail.io" target="_blank">Call To Action</a>
+                                                    <!-- END BUTTON LINK -->
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <p>This is a really simple email template. It's sole purpose is to get the recipient to click the button with no distractions.</p>
+                            <p>Good luck! Hope it works.</p>
+                        </td>
+                    </tr>
 
-							<!-- END MAIN CONTENT AREA -->
-						</table>
+                    <!-- END MAIN CONTENT AREA -->
+                </table>
 
-						<!-- START FOOTER -->
-						<div class="footer">
-							<table role="presentation" border="0" cellpadding="0" cellspacing="0">
-								<tr>
-									<td class="content-block">
-										<span class="apple-link">Company Inc, 7-11 Commercial Ct, Belfast BT1 2NB</span>
-										<br> Don't like these emails? <a href="http://htmlemail.io/blog">Unsubscribe</a>.
-									</td>
-								</tr>
-								<tr>
-									<td class="content-block">
-										Powered by
-										<a href="http://htmlemail.io">HTMLemail.io</a>
-									</td>
-								</tr>
-							</table>
-						</div>
+                <!-- START FOOTER -->
+                <div class="footer">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="content-block">
+                                <span class="apple-link">Company Inc, 7-11 Commercial Ct, Belfast BT1 2NB</span>
+                                <br> Don't like these emails? <a href="http://htmlemail.io/blog">Unsubscribe</a>.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="content-block">
+                                Powered by
+                                <a href="http://htmlemail.io">HTMLemail.io</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
 
-						<!-- END FOOTER -->
+                <!-- END FOOTER -->
 
-						<!-- END CENTERED WHITE CONTAINER --></div>
-				</td>
-				<td>&nbsp;</td>
-			</tr>
-		</table>
-	</body>
-	</html>
-
-
-
+                <!-- END CENTERED WHITE CONTAINER --></div>
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+</table>
+</body>
+</html>
