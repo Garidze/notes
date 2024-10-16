@@ -1,0 +1,86 @@
+1. Абстракный класс CurrencyAbstract:
+
+	<?php
+
+		namespace App\Services\Currencies;
+
+		abstract class CurrencyAbstract
+		{
+			abstract function setCurrency();
+			
+			public function getCurrency()
+			{
+				return $this->current;
+			}
+
+		}
+		
+		
+2. Классы Валют:
+
+	UsdCurrency:
+	
+		<?php
+
+			namespace App\Services\Currencies;
+
+			use Illuminate\Support\Facades\Http;
+
+			class UsdCurrency extends CurrencyAbstract
+			{
+				protected $current;
+
+				public function __construct()
+				{
+					$this->current = $this->setCurrency();
+				}
+
+				public function setCurrency()
+				{
+					$apiUrl = 'https://api.nbrb.by/exrates/rates?periodicity=0';
+					return collect(Http::withOptions(['proxy' => '192.168.7.181:3128'])->get($apiUrl)->json())->where('Cur_Abbreviation', 'USD')->keyBy('Cur_Abbreviation');
+				}
+			}
+			
+	EurCurrency:
+	
+		<?php
+
+			namespace App\Services\Currencies;
+
+			use Illuminate\Support\Facades\Http;
+
+			class EurCurrency extends CurrencyAbstract
+			{
+				protected $current;
+
+				public function __construct()
+				{
+					$this->current = $this->setCurrency();
+				}
+
+				public function setCurrency()
+				{
+					$apiUrl = 'https://api.nbrb.by/exrates/rates?periodicity=0';
+					return collect(Http::withOptions(['proxy' => '192.168.7.181:3128'])->get($apiUrl)->json())->where('Cur_Abbreviation', 'EUR')->keyBy('Cur_Abbreviation');
+				}
+			}
+			
+			
+3. php artisan make:provider CurrencyProvider:
+
+    public function register(): void
+    {
+        $this->app->singleton(CurrencyAbstract::class, function (Application $app){
+            return new EurCurrency();
+			//return new UsdCurrency();
+        });
+    }
+	
+	
+4. Controller:
+
+    public function index(CurrencyAbstract $currencyAbstract)
+    {
+        dd($currencyAbstract->getCurrency());
+    }
