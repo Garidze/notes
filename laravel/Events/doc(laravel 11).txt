@@ -1,0 +1,41 @@
+1. Event - php artisan make:event TestIndexProcessed
+
+    public $data;
+	
+    public function __construct($data)
+    {
+        $this->data = $data;
+    }
+	
+	
+2. Listener - php artisan make:listener TestIndexNotification --event=TestIndexProcessed 
+
+    public function handle(TestIndexProcessed $event): void
+    {
+        Mail::to('fire9988point@gmail.com')->send(new TestMail($event->data));
+    }
+	
+	
+3. app/Providers/AppServiceProvider.php:
+
+    public function boot(): void
+    {
+        Event::listen(
+            TestIndexProcessed::class,
+            TestIndexNotification::class,
+        );
+    }
+	
+	
+4. Controller:
+
+        $data = [
+            "hello" => "Hello, there!!!",
+            "tFirst" => "Sometimes you just want to send a simple HTML email with a simple design and clear call to action. This is it.",
+            "tSecond" => "This is a really simple email template. It's sole purpose is to get the recipient to click the button with no distractions.",
+            "signature" => "Good luck! Hope it works.",
+            "btnTitle" => "Call to action",
+            "btnLink" => route('test.main'),
+        ];
+		
+        event(new TestIndexProcessed($data));

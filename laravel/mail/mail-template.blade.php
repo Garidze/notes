@@ -1,26 +1,13 @@
-<!--##### ПРИМЕР ИСПОЛЬЗОВАНИЯ ПЕРЕМЕННЫХ #####-->
-
-{{--<!DOCTYPE html>--}}
-{{--<html>--}}
-
-{{--<head>--}}
-{{--    <title>Laravel Mail</title>--}}
-{{--</head>--}}
-
-{{--<body>--}}
-
-{{--<h1>{{ $data['title'] }}</h1>--}}
-
-{{--<p>{{ $data['body'] }}</p>--}}
-
-{{--<p>Thank you</p>--}}
-
-{{--</body>--}}
-
-{{--</html>--}}
-
-
-<!--##### ШАБЛОН ПИСЬМА #####-->
+@php
+$data = [
+            "hello" => "Hello there",
+            "tFirst" => "Sometimes you just want to send a simple HTML email with a simple design and clear call to action. This is it.",
+            "tSecond" => "This is a really simple email template. It's sole purpose is to get the recipient to click the button with no distractions.",
+            "signature" => "Good luck! Hope it works.",
+            "btnTitle" => "Call to action",
+            "btnLink" => route('test.main'),
+        ]
+@endphp
 
 <!doctype html>
 <html lang="en">
@@ -54,6 +41,7 @@
             font-size: 16px;
             vertical-align: top;
         }
+
         /* -------------------------------------
         BODY & CONTAINER
 		------------------------------------- */
@@ -84,6 +72,7 @@
             max-width: 600px;
             padding: 0;
         }
+
         /* -------------------------------------
         HEADER, FOOTER, MAIN
 		------------------------------------- */
@@ -110,20 +99,24 @@
         .footer * {
             font-size: 14px;
         }
+
         .footer td,
         .footer p,
         .footer span {
             color: #9a9ea6;
             text-align: center;
         }
+
         .footer a {
             text-align: center;
             color: #0867ec;
         }
+
         .footer a:hover {
             color: #0d6efd;
             text-decoration: underline;
         }
+
         /* -------------------------------------
         TYPOGRAPHY
 		------------------------------------- */
@@ -140,6 +133,7 @@
             color: #0867ec;
             text-decoration: none;
         }
+
         /* -------------------------------------
         BUTTONS
 		------------------------------------- */
@@ -194,6 +188,7 @@
             .btn-primary table td:hover {
                 background-color: #0a58ca !important;
             }
+
             .btn-primary a:hover {
                 background-color: #0a58ca !important;
                 border-color: #0a58ca !important;
@@ -264,32 +259,39 @@
             .main span {
                 font-size: 16px !important;
             }
+
             .wrapper {
                 padding: 8px !important;
             }
+
             .content {
                 padding: 0 !important;
             }
+
             .container {
                 padding: 0 !important;
                 padding-top: 8px !important;
                 width: 100% !important;
             }
+
             .main {
                 border-left-width: 0 !important;
                 border-radius: 0 !important;
                 border-right-width: 0 !important;
             }
+
             .btn table {
                 max-width: 100% !important;
                 width: 100% !important;
             }
+
             .btn a {
                 font-size: 16px !important;
                 max-width: 100% !important;
                 width: 100% !important;
             }
         }
+
         /* -------------------------------------
         PRESERVE THESE STYLES IN THE HEAD
 		------------------------------------- */
@@ -298,6 +300,7 @@
             .ExternalClass {
                 width: 100%;
             }
+
             .ExternalClass,
             .ExternalClass p,
             .ExternalClass span,
@@ -306,6 +309,7 @@
             .ExternalClass div {
                 line-height: 100%;
             }
+
             .apple-link a {
                 color: inherit !important;
                 font-family: inherit !important;
@@ -314,6 +318,7 @@
                 line-height: inherit !important;
                 text-decoration: none !important;
             }
+
             #MessageViewBody a {
                 color: inherit;
                 text-decoration: none;
@@ -339,9 +344,10 @@
                     <!-- START MAIN CONTENT AREA -->
                     <tr>
                         <td class="wrapper">
-                            <p style="font-weight:600;font-size:20px;">Hi there!!!</p>
-                            <p>Sometimes you just want to send a simple HTML email with a simple design and clear call to action. This is it.</p>
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+                            <p style="font-weight:600;font-size:20px;">{{ $data['hello'] }}</p>
+                            <p>{{ $data['tFirst'] }}</p>
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0"
+                                   class="btn btn-primary">
                                 <tbody>
                                 <tr>
                                     <td align="left">
@@ -350,7 +356,8 @@
                                             <tr>
                                                 <td>
                                                     <!-- BUTTON LINK -->
-                                                    <a href="http://htmlemail.io" target="_blank">Call To Action</a>
+                                                    <a href="{{ $data['btnLink'] }}"
+                                                       target="_blank">{{ $data['btnTitle'] }}</a>
                                                     <!-- END BUTTON LINK -->
                                                 </td>
                                             </tr>
@@ -360,8 +367,8 @@
                                 </tr>
                                 </tbody>
                             </table>
-                            <p>This is a really simple email template. It's sole purpose is to get the recipient to click the button with no distractions.</p>
-                            <p>Good luck! Hope it works.</p>
+                            <p>{{ $data['tSecond'] }}</p>
+                            <p>{{ $data['signature'] }}</p>
                         </td>
                     </tr>
 

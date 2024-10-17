@@ -1,0 +1,94 @@
+1. Интерфейс CurrencyInterface:
+
+	<?php
+
+		namespace App\Services\Currencies;
+
+		interface CurrencyInterface
+		{
+			public function setCurrency();
+
+			public function getCurrency();
+		}
+		
+		
+2. Классы Валют:
+
+	UsdCurrency:
+	
+		<?php
+
+			namespace App\Services\Currencies;
+			
+			use Illuminate\Support\Facades\Http;
+
+			class UsdCurrency implements CurrencyInterface
+			{
+				protected $current;
+
+				public function __construct()
+				{
+					$this->current = $this->setCurrency();
+				}
+
+				public function setCurrency()
+				{
+					$apiUrl = 'https://api.nbrb.by/exrates/rates?periodicity=0';
+					return collect(Http::withOptions(['proxy' => '192.168.7.181:3128'])->get($apiUrl)->json())->where('Cur_Abbreviation', 'USD')->keyBy('Cur_Abbreviation');
+				}
+
+				public function getCurrency()
+				{
+					return $this->setCurrency();
+				}
+			}
+			
+	EurCurrency:
+	
+		<?php
+
+			namespace App\Services\Currencies;
+			
+			use Illuminate\Support\Facades\Http;
+
+			class EurCurrency implements CurrencyInterface
+			{
+				protected $current;
+
+				public function __construct()
+				{
+					$this->current = $this->setCurrency();
+				}
+
+				public function setCurrency()
+				{
+					$apiUrl = 'https://api.nbrb.by/exrates/rates?periodicity=0';
+					return collect(Http::withOptions(['proxy' => '192.168.7.181:3128'])->get($apiUrl)->json())->where('Cur_Abbreviation', 'EUR')->keyBy('Cur_Abbreviation');
+				}
+
+				public function getCurrency()
+				{
+					return $this->setCurrency();
+				}
+			}
+			
+			
+3. php artisan make:provider CurrencyProvider:
+
+    public function register(): void
+    {
+        $this->app->singleton(CurrencyInterface::class, function (Application $app){
+            return new EurCurrency();
+			//return new UsdCurrency();
+        });
+    }
+
+
+4. Controller:
+
+    public function index(CurrencyInterface $currency)
+    {
+        dd($currency->getCurrency());
+    }
+
+
