@@ -1,0 +1,9 @@
+AbstractFrontWheel(class)
+
+	-> IWheel(interface)
+	
+		-> SummerWheel(class)
+		
+			-> WinterWheel(class)
+			
+				-> TestController
