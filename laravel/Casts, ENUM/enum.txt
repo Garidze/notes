@@ -1,0 +1,23 @@
+1. Classic
+
+		<?php
+
+			namespace App\Enums;
+
+			enum Locales: string
+			{
+				case RU = 'ru';
+				case EN = 'en';
+			}
+			
+2. Check value
+
+		Locales::tryFrom($request->lang)   // null -if not found
+		
+		
+3. Iterate
+
+		foreach (Locales::cases() as $locale) { 
+			echo $locale->name;
+			echo $locale->value;
+		}

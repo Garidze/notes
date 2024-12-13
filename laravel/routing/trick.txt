@@ -1,0 +1,68 @@
+1. app/Enums/Locales.php
+
+		<?php
+
+			namespace App\Enums;
+
+			enum Locales: string
+			{
+				case RU = 'ru';
+				case EN = 'en';
+			}
+			
+			
+2. Routing
+
+	Route::prefix('{lang?}')->group(function () {
+        Route::get('/test', [\App\Http\Controllers\TestController::class, 'index'])->name('test.main.param');
+    });
+
+    Route::get('/test', [\App\Http\Controllers\TestController::class, 'index'])->name('test.main');
+		
+		
+3. Middleware
+
+    public function handle(Request $request, Closure $next): Response
+    {
+        if(!$request->lang) return $next($request);
+
+        if(Locales::tryFrom($request->lang)){
+            return $next($request);
+        };
+
+        $uri = str_replace($request->lang, '', $request->decodedPath());
+
+        return redirect($uri, 301);
+
+
+    }
+	
+	
+	
+###################################################
+
+request()->segment(1, '')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
