@@ -4,4 +4,5 @@ app/Providers/AppServiceProvider.php:
     public function boot(): void
     {
         Paginator::useBootstrapFive();
+		// Paginator::useBootstrapFour();
     }

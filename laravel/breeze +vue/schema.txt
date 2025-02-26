@@ -21,7 +21,7 @@ Proxy settings:
 
 	a. composer require laravel/breeze --dev ;
 	
-	b. php artisan breeze:install (breeze with alpine) ;
+	b. php artisan breeze:install (blade with alpine) ;
 	
 	
 3. Copy file: resources/js/app.js -> resources/js/app-alpine.js
@@ -48,6 +48,8 @@ Proxy settings:
 	a. composer require laravel/ui ;
 	
 	b. php artisan ui vue ;
+	
+	?. ( npm i --force )
 	
 	
 5. Settings:
