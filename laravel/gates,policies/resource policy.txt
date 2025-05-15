@@ -1,0 +1,138 @@
+1. PostController(resource):
+
+	Регистраци политики в контроллере:
+	
+		Без модели:
+	
+			public function __construct()
+			{
+				$this->authorizeResource(Post::class, ['App\Models\Post','id']);
+			}
+			
+		С моделью:
+		
+			public function __construct()
+			{
+				$this->authorizeResource(Category::class, 'category');
+			}
+		
+2. php artisan make:policy PostPolicy --model=Post // Ресурс-политика
+
+	Без модели:
+
+		class PostPolicy
+		{
+
+			use HandlesAuthorization;
+			
+
+			// index - controller method
+			
+			public function viewAny(?User $user): bool
+			{
+				return true;
+
+			}
+			
+			
+
+			// show - controller method
+			
+			public function view(?User $user): bool
+			{
+				return true;
+			}
+			
+			
+			
+
+			// create, store - controller method
+			
+			public function create(User $user): bool
+			{
+				return true;
+			}
+			
+			
+			
+
+			// edit, update - controller method
+			
+			public function update(User $user, $id): bool
+			{
+				return $user->id == Post::findOrFail($id)->user_id;
+			}
+			
+			
+			
+
+			// destroy - controller method
+			
+			public function delete(?User $user, $id): bool
+			{
+				return $user->id == Post::find($id)->user_id;
+			}
+			
+			
+			
+
+			public function restore(User $user, Post $post): bool
+			{
+				//
+			}
+			
+			
+			
+
+			public function forceDelete(User $user, Post $post): bool
+			{
+				//
+			}
+			
+		}
+	
+3. Регистрация политики - app/Providers/AuthServiceProvider:
+
+	protected $policies = [
+        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        Category::class => CategoryPolicy::class,
+    ];
+	
+	
+4. Использование в View:
+
+	@can('update', [App\Models\Post::class, $post->id])
+	
+		<a href="{{ route('post.edit', $post->id) }}" class="linkButton" title="Edit">Edit</a>
+		
+	@endcan
+	@endcan
+
+	@canany(['update', 'delete'], [App\Models\Post::class, $post->id])
+	
+		<a href="{{ route('post.edit', $post->id) }}" class="linkButton" title="Edit">Edit</a>
+		
+	@endcanany
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	

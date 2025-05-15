@@ -1,0 +1,146 @@
+1. php artisan make:middleware NameMiddleware
+
+2. ДЛЯ КАЖДОГО ЗАПРОСА регистрируем в app\Http\Kernel.php
+
+    protected $middleware = [
+        // \App\Http\Middleware\TrustHosts::class,
+        \App\Http\Middleware\TrustProxies::class,
+        \Illuminate\Http\Middleware\HandleCors::class,
+        \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+		
+        \App\Http\Middleware\NameMiddleware::class,
+		
+    ];
+	
+	
+	СОЗДАНИЕ ГРУППЫ:
+	
+		protected $middlewareAliases = [
+			'auth' => \App\Http\Middleware\Authenticate::class,
+			...
+			'is-admin' =>\App\Http\Middleware\UserIsAdmin::class,
+		];
+		
+		protected $middlewareGroups = [
+			'web' => [
+				\App\Http\Middleware\EncryptCookies::class,
+				\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+				\Illuminate\Session\Middleware\StartSession::class,
+				\Illuminate\View\Middleware\ShareErrorsFromSession::class,
+				\App\Http\Middleware\VerifyCsrfToken::class,
+				\Illuminate\Routing\Middleware\SubstituteBindings::class,
+			],
+
+			'api' => [
+				// \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+				\Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+				\Illuminate\Routing\Middleware\SubstituteBindings::class,
+			],
+			'mygroup' => [
+				'auth',
+				'is-admin',
+				...
+			]
+		];
+		
+3. Применение в контроллере:
+
+		public function __construct()
+		{
+			$this->middleware('middlewareName'); // for all methods
+			$this->middleware('middlewareName')->only('index'); // for index method only
+			$this->middleware('middlewareName')->except('index');
+		}
+
+
+	
+ПРИМЕРЫ:
+
+1. php artisan make:middleware UserIsAdmin;
+
+2. UserIsAdmin.php :
+
+	public function handle(Request $request, Closure $next): Response
+    {
+        $user = $request->user();
+
+        if($user && $user->roles()->where('name','Admin')->count() > 0) {
+            return $next($request);
+        }
+        return abort(404);
+    }
+	
+3. web.php :
+
+	Ver.#1:
+	
+		use \App\Http\Middleware\UserIsAdmin;
+		
+			Route::middleware(UserIsAdmin::class)->group(function () {
+				Route::prefix('admin')->group(function () {
+					Route::get('/', [AdminPageController::class, 'index'])->name('admin.index');
+				});
+				Route::prefix('admin/category')->resource('category', AdminCategoryController::class)->parameters(['category'=>'id']);
+			});
+		
+	Ver.#2:
+	
+		1. app\Http\Kernel.php:
+		
+			protected $middlewareAliases = [
+				'auth' => \App\Http\Middleware\Authenticate::class,
+				'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+				....
+				'is-admin' =>\App\Http\Middleware\UserIsAdmin::class,
+			];
+
+		2.web.php :
+		
+			#1:
+			Route::middleware('auth', 'is-admin')->group(function () {
+				Route::prefix('admin')->group(function () {
+				Route::get('/', [AdminPageController::class, 'index'])->name('admin.index');
+				});
+				Route::prefix('admin/category')->resource('category', AdminCategoryController::class)->parameters(['category'=>'id']);
+			});
+			
+			#2:
+			Route::middleware('is-admin')->group(function () {
+				Route::prefix('admin')->group(function () {
+				Route::get('/', [AdminPageController::class, 'index'])->name('admin.index');
+				});
+				Route::prefix('admin/category')->resource('category', AdminCategoryController::class)->parameters(['category'=>'id']);
+			});
+			
+			#3:
+			Route::middleware('mygroup')->group(function () {
+				Route::prefix('admin')->group(function () {
+				Route::get('/', [AdminPageController::class, 'index'])->name('admin.index');
+				});
+				Route::prefix('admin/category')->resource('category', AdminCategoryController::class)->parameters(['category'=>'id']);
+			});
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

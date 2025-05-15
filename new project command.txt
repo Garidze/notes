@@ -1,0 +1,43 @@
+composer create-project laravel/laravel .
+
+
+
+composer:
+
+	set http_proxy=192.168.7.181:3128
+
+	set https_proxy=192.168.7.181:3128
+	
+	
+
+npm:
+
+	Установка:
+	
+		npm config set proxy http://192.168.7.181:3128
+	
+	Удаление:
+	
+		npm config rm proxy
+		npm config rm https-proxy
+
+
+
+
+composer create-project laravel/laravel:^10.0 
+
+
+
+##############################################
+
+		Laravel installer command:
+		
+			- composer global remove laravel/installer
+			
+			- composer global require "laravel/installer:^5" -W
+			
+			- laravel --version
+			
+		Laravel 12:
+		
+			- laravel new example-app

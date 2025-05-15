@@ -1,0 +1,70 @@
+1. php artisan make:migration create_products_table
+
+2. Migration: Связь по полям: Products -> categoty_id ---> Category -> id: 
+	
+	public function up()
+		{
+			Schema::create('products', function (Blueprint $table) {
+				$table->foreignIdFor(Category::class)->constrained(); //->contrained не дает удлить категорию, пока есть посты
+			});
+		}
+
+    public function down()
+		{
+			Schema::dropIfExists('products');
+		}
+	
+	
+3. Связи в моделях: 
+
+	Category model:
+	
+		public function products()
+		{
+			return $this->hasMany(Product::class);
+		}
+		
+	Product model:
+	
+		public function category()
+		{
+			return $this->belongsTo(Category::class);
+			// return $this->hasOne(Product::class, 'id', 'id_ip');
+		}
+		
+	(название функций не имеет значения)
+	
+4. Передача в вид:
+	
+	public function index()
+    {
+        $products = Product::with('category')->get();
+        return view('products.product-all', compact('products'));
+    }
+	
+5. index.blade.php
+
+	{{ dd($products->first()->category->name) }}
+
+	 @foreach($products as $product)
+	 
+		{{ $product->category->name }}   // ->category - функция из модели
+		
+	 @endforeach
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		

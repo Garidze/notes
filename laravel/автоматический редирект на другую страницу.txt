@@ -1,0 +1,3 @@
+В тег head:
+
+ <meta http-equiv="refresh" content="4; URL=/kyda-nado" /> // через 4 секунды

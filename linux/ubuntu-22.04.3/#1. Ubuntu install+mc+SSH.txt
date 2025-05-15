@@ -1,0 +1,91 @@
+1. Актуализация доступных пакетов в репозиториях:
+
+	sudo apt update ;
+	
+
+2.  Установка доступных обновлений для системы:
+
+	sudo apt upgrade ;
+	
+	
+3. Установка временной зоны( перечень: sudo timedatectl list-timezones ):
+
+	sudo timedatectl set-timezone Europe/Minsk;
+	
+	
+4. Установка FQDN имя хоста:
+
+	sudo hostnamectl set-hostname ubuntu.itproblog.ru
+	
+
+5. Установка пароля для root:
+
+	переходим в учетную запись -> sudo su ;
+	
+	passwd ;
+	
+	
+6. установка файлового менеджера:
+
+	sudo apt -y install mc (sudo apt-get -y install mc) ;
+	
+	
+7. SSH:
+
+	# Изменить параметр в /etc/ssh/sshd_config :
+	
+		PermitRootLogin yes;
+		
+	# Перезапускаем ssh server:
+	
+		systemctl restart ssh || systemctl restart sshd ;
+		
+		sudo service ssh restart ;
+		
+	# Подключение по SSH:
+
+		# hostname -I ;
+		
+		Терминал:
+		
+			ssh username@ip-address
+			
+			ssh username@ip-address/hostname
+	
+		
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

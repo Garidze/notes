@@ -1,0 +1,67 @@
+1. (npm i) -and (npm i autoprefixer) -and (npm i -D sass) -and (npm i postcss)
+
+
+2. положить(создать) в корень файл - postcss.config.js или postcss.config.cjs(для послединх версий)
+	содержимое файла:
+	
+		module.exports = {
+			plugins: {
+				autoprefixer: {}
+			}
+		}
+		
+		
+3. добавить в package.json:
+	"browserslist": [ "last 5 versions" ]
+	
+	
+4. содержимое файла vite.config.js(в корне) для работы с autoprefixer:
+
+	import { defineConfig } from 'vite';
+	import laravel from 'laravel-vite-plugin';
+	import autoprefixer from 'autoprefixer';
+
+	export default defineConfig({
+		plugins: [
+			laravel({
+				input: ['resources/css/app.scss', 'resources/js/app.js'],
+				refresh: true,
+				postcss: {
+					plugins: [
+						autoprefixer({
+							grid: true,
+							cascade: true,
+						}),
+					]
+				},
+			}),
+		],
+	});
+	
+5. vite build 
+
+6. Директива вставки в BLADE шаблон
+	@section('styles')
+	{{--    <link rel="stylesheet" href="{{ asset('css/main.css') }}">--}}
+		@vite(['resources/css/app.css', 'resources/js/app.js'])
+	@endsection
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+

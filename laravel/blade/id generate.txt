@@ -1,0 +1,6 @@
+@php($id = Str::uuid())
+
+
+
+<label for="{{ $id }}">Category name</label>
+<input type="text" name="title" id="{{ $id }}">

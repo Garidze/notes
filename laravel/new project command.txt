@@ -1,0 +1,12 @@
+npm config set proxy http://192.168.7.181:3128
+
+set http_proxy=192.168.7.181:3128
+
+set https_proxy=192.168.7.181:3128
+
+
+composer create-project laravel/laravel .
+
+composer create-project laravel/laravel:^10.0 
+
+

@@ -1,0 +1,294 @@
+EXAMPLE#1:
+
+	<template>
+		<div class="photoPreview">
+			<div class="photoPreview__item photoPreview__item-addButton">
+				<label for="images">Add image</label>
+				<input type="file"
+					   name="images[]"
+					   accept="image/*"
+					   id="images"
+					   @change="addImage"
+					   multiple
+				>
+			</div>
+
+			<div class="photoPreview__item" v-if="imageSrc.length > 0" v-for="(i, n) in imageSrc">
+				<img :src="i" alt="" class="photoPreview__img">
+				<img src="img/close-red.png" alt="" class="photoPreview__close" @click="delImage($event, n)">
+			</div>
+		</div>
+	</template>
+
+	<script>
+	export default {
+		data() {
+			return {
+				dataTransfer: new DataTransfer(),
+				imageSrc: [],
+			}
+		},
+		methods: {
+			addImage(e) {
+				let [...files] = e.target.files;
+				files.forEach((i) => {
+					if(i.type.startsWith('image/')){
+						let imgSrc = URL.createObjectURL(i);
+						this.imageSrc.push(imgSrc);
+						this.dataTransfer.items.add(i);
+					}
+				});
+				e.target.files = this.dataTransfer.files;
+			},
+			delImage(e, n) {
+				this.imageSrc = this.imageSrc.filter((el, idx) => idx !== n );
+				this.dataTransfer.items.remove(n);
+				let inputImg = document.getElementById('images');
+				inputImg.files = this.dataTransfer.files;
+			}
+
+			// uploadFile() {
+			//     let self = this;
+			//     let input = document.createElement("input");
+			//     input.setAttribute("type", "file");
+			//     input.setAttribute("name", "image[]");
+			//     input.setAttribute("hidden", "");
+			//     input.setAttribute("accept", "image/*");
+			//     input.click();
+			//     input.onchange = function () {
+			//         if (this.files[0].type.startsWith('image/')) {
+			//             self.fileTypeError = false;
+			//
+			//             self.previewImage = false;
+			//             let photoPreview = document.querySelector('.photoPreview'),
+			//                 photoPreviewItem = document.createElement('div');
+			//
+			//                 imgPreview = document.createElement('img'),
+			//                 imgClose = document.createElement('img'),
+			//                 [file] = this.files;
+			//             photoPreviewItem.setAttribute("class", "photoPreview__item");
+			//             imgPreview.setAttribute("class", "photoPreview__img");
+			//             imgPreview.setAttribute("src", URL.createObjectURL(file));
+			//             imgClose.setAttribute("class", "photoPreview__close");
+			//             imgClose.setAttribute("@click", self.delItem);//not work
+			//             imgClose.setAttribute("src", "img/close-red.png");
+			//
+			//             photoPreviewItem.append(imgPreview);
+			//             photoPreviewItem.append(imgClose);
+			//             photoPreviewItem.append(this);
+			//
+			//             photoPreview.append(photoPreviewItem);
+			//
+			//         } else {
+			//             self.fileTypeError = true;
+			//         }
+			//     }
+			// },
+		},
+		computed: {
+			//
+		},
+		mounted() {
+			console.log('Component mounted.')
+		}
+	}
+	</script>
+
+	<style lang="scss">
+	
+	</style>
+	
+	
+	
+EXAMPLE#2:
+
+	<template>
+		<button type="button" class="btn btn-primary" @click="createElem">Add</button>
+		<div class="photoPreview">
+			<!--append section-->
+		</div>
+	</template>
+
+	<script>
+	export default {
+		data() {
+			return {
+
+			}
+		},
+		methods: {
+			createElem() {
+				let inputFile = document.createElement('input');
+				inputFile.setAttribute("type", "file");
+				inputFile.setAttribute("hidden", "");
+				inputFile.setAttribute("accept", "image/*");
+				inputFile.click();
+				inputFile.onchange = function () {
+					if(this.files[0].type.startsWith('image/')) {
+						// let [file] = this.files; // let file = this.files[0];
+						let imgSrc = URL.createObjectURL(this.files[0]);
+						let photoPreviewItem = document.createElement('div');
+						photoPreviewItem.classList.add('photoPreview__item');
+						photoPreviewItem.innerHTML = `<img src="${imgSrc}" alt="" class="photoPreview__img">`;
+						let btnClose = document.createElement('img');
+						btnClose.classList.add('photoPreview__close');
+						btnClose.src = 'img/close-red.png';
+						btnClose.addEventListener('click', function () {
+							this.closest('.photoPreview__item').remove();
+						});
+						photoPreviewItem.append(btnClose);
+
+						let inputImage = document.createElement('input');
+						inputImage.type = 'file';
+						inputImage.name = 'images[]';
+						inputImage.files = this.files;
+						inputImage.hidden = true;
+						photoPreviewItem.append(inputImage);
+
+						let photoPreview = document.querySelector('.photoPreview');
+						photoPreview.append(photoPreviewItem);
+					}
+				};
+			}
+		},
+		// computed: {
+		//     //
+		// },
+		// mounted() {
+		//     console.log('Component mounted.')
+		// }
+	}
+	</script>
+
+	<style lang="scss">
+
+	input[name='image[]'] {
+		width: 100%;
+	}
+
+	small {
+		color: var(--text-danger);
+	}
+
+	</style>
+	
+	
+	
+EXAMPLE#3:
+
+<template>
+    <button type="button" class="btn btn-primary" @click="createElem">Add</button>
+        <div class="photoPreview">
+            <transition-group name="fade">
+                <div class="photoPreview__item" v-for="(img,n) in images" :key="img">
+                    <img :src="urlImage(img)" alt="" class="photoPreview__img">
+                    <img src="img/close-black.png" alt="" class="photoPreview__close" @click="removeElem(n)">
+                </div>
+            </transition-group>
+        </div>
+
+    <div class="inputRender"><!-- append input file --></div>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            images: [],
+        }
+    },
+    watch: {
+        images: {
+            handler(val, oldVal) {
+                this.renderInputs();
+            },
+            // immediate: true,
+            deep: true
+        },
+    },
+    methods: {
+        createElem() {
+            let self = this;
+            let inputFile = document.createElement('input');
+            inputFile.type = 'file';
+            inputFile.accept = 'image/*';
+            inputFile.click();
+            inputFile.onchange = function () {
+                if(this.files[0].type.startsWith('image/')) {
+                    // let [file] = this.files; // let file = this.files[0];
+                    self.images.push(this.files[0]);
+                }
+            };
+            console.log('event: createElem()');
+        },
+        urlImage(el) {
+            return URL.createObjectURL(el);
+        },
+        removeElem(el) {
+            this.images = this.images.filter((i, n) => {
+                return n !== el;
+            });
+            console.log('event: removeElem(el)');
+        },
+        renderInputs() {
+            let inputRender = document.querySelector('.inputRender');
+            inputRender.innerHTML = '';
+
+            let inputImage = document.createElement('input');
+            inputImage.type = 'file';
+            inputImage.name = 'images[]';
+            inputImage.hidden = true;
+
+            let dataTransfer = new DataTransfer();
+            this.images.forEach(i => {
+                dataTransfer.items.add(i);
+            })
+            inputImage.files = dataTransfer.files;
+            inputRender.append(inputImage);
+        },
+    },
+    // computed: {
+    //     //
+    // },
+    // mounted() {
+    //     console.log('Component mounted.')
+    // }
+}
+</script>
+
+<style lang="scss">
+
+input[name='image[]'] {
+    width: 100%;
+}
+
+small {
+    color: var(--text-danger);
+}
+
+</style>
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

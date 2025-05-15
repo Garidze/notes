@@ -1,0 +1,35 @@
+In LAYOUT:
+
+	<head>
+		@stack('css')
+	</head>
+	<body>
+		@stack('scripts')
+	</body>
+	
+	
+	
+In COMPONENT:
+
+    @push('scripts')
+        <script src="{{ asset('js/trix.umd.min.js') }}"></script>
+    @endpush
+	
+    @push('css')
+        <link href="{{ asset('css/trix.css') }}" rel="stylesheet">
+    @endpush
+	
+	OR
+	
+	@once
+	
+		@push('scripts')
+			<script src="{{ asset('js/trix.umd.min.js') }}"></script>
+		@endpush
+
+		@push('css')
+			<link href="{{ asset('css/trix.css') }}" rel="stylesheet">
+		@endpush
+		
+	@endonce
+	

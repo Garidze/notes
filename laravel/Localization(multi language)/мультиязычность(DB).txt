@@ -1,0 +1,166 @@
+1.  php artisan make:model News -m
+	php artisan make:model NewsTranslate -m
+	
+	
+2. Migration:
+
+    a) 2024_12_12_130330_create_news_table.php:
+
+            <?php
+
+                use Illuminate\Database\Migrations\Migration;
+                use Illuminate\Database\Schema\Blueprint;
+                use Illuminate\Support\Facades\Schema;
+
+                return new class extends Migration
+                {
+                    /**
+                     * Run the migrations.
+                     */
+                    public function up(): void
+                    {
+                        Schema::create('news', function (Blueprint $table) {
+                            $table->id();
+                            $table->timestamps();
+                        });
+                    }
+
+                    /**
+                     * Reverse the migrations.
+                     */
+                    public function down(): void
+                    {
+                        Schema::dropIfExists('news');
+                    }
+                };
+
+    b) 2024_12_12_130455_create_news_translates_table.php:
+
+            <?php
+
+                use App\Models\News;
+                use Illuminate\Database\Migrations\Migration;
+                use Illuminate\Database\Schema\Blueprint;
+                use Illuminate\Support\Facades\Schema;
+
+                return new class extends Migration
+                {
+                    /**
+                     * Run the migrations.
+                     */
+                    public function up(): void
+                    {
+                        Schema::create('news_translates', function (Blueprint $table) {
+                            $table->foreignIdFor(News::class)->constrained();
+                            $table->string('title');
+                            $table->string('lang');
+                            $table->text('content');
+                        });
+                    }
+
+                    /**
+                     * Reverse the migrations.
+                     */
+                    public function down(): void
+                    {
+                        Schema::dropIfExists('news_translates');
+                    }
+                };
+
+
+3. Models:
+
+    a) News.php:
+
+        <?php
+
+        namespace App\Models;
+
+        use Illuminate\Database\Eloquent\Factories\HasFactory;
+        use Illuminate\Database\Eloquent\Model;
+        use Illuminate\Database\Eloquent\Relations\HasOne;
+
+        class News extends Model
+        {
+            use HasFactory;
+
+            protected $table = 'news';
+
+            public function getTranslate(): HasOne
+            {
+                return $this->hasOne(NewsTranslate::class)->where('lang', '=',  app()->getLocale());
+            }
+
+        }
+
+    b) NewsTranslate.php:
+
+        <?php
+
+        namespace App\Models;
+
+        use Illuminate\Database\Eloquent\Factories\HasFactory;
+        use Illuminate\Database\Eloquent\Model;
+
+        class NewsTranslate extends Model
+        {
+            use HasFactory;
+
+            protected $table = 'news_translates';
+        }
+
+
+4. Controller:
+
+    <?php
+
+        namespace App\Http\Controllers;
+
+        use App\Models\News;
+        use GuzzleHttp\Psr7\Request;
+
+        class TestController extends Controller
+        {
+            public function news()
+            {
+                $news = News::has('getTranslate')->with('getTranslate')->paginate(3); // Проверка, есть ли в БД язык перевода
+
+                return view('test.news', compact('news'));
+            }
+        }
+
+
+5. Blade:
+
+   <div class="container flex-grow-1 pt-2 pb-2">
+        <div class="pt-2">
+            <h1>{{ __('Новости') }}</h1>
+            <hr style="height: 1px;background:#e7e7e7; margin: 1.5rem 0 1rem;">
+        </div>
+        @foreach($news as $one)
+            <div class="card mb-3">
+                <div class="card-header" style="font-size: 1.5rem;font-weight:500;">{{ $one->getTranslate->title }}</div>
+                <div class="card-body">
+                    {{--                    <h5 class="card-title">Special title treatment</h5>--}}
+                    <p class="card-text" style="text-indent: 3px;">{{ \Illuminate\Support\Str::limit($one->getTranslate->content, 200,) }}</p>
+                    <a href="#" class="btn btn-primary btn-sm">{{ __('Подробнее') }}...</a>
+                </div>
+            </div>
+        @endforeach
+        <div class="mt-4">
+            {{ $news->links() }}
+        </div>
+    </div>
+
+
+6. Bootstrap -> AppServiceProvider.php:
+
+    Paginator::useBootstrapFive();
+
+
+
+
+
+
+
+

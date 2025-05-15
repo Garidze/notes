@@ -1,0 +1,36 @@
+Laravel 11
+
+1. php artisan install:api
+
+	The install:api command installs Laravel Sanctum, which provides a robust, yet simple API token authentication guard which can be used to authenticate third-party API consumers, SPAs, or mobile applications. In addition, the install:api command creates the routes/api.php
+	
+	
+2. api.php:
+
+    Route::prefix('country')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\CountryApiController::class, 'index'])->name('country.main');
+    });
+	
+	
+3. Controller:
+
+	<?php
+
+	namespace App\Http\Controllers\Api;
+	use App\Http\Controllers\Controller;
+	use App\Models\Country;
+
+
+	class CountryApiController extends Controller
+	{
+		public function index()
+		{
+			return response()->json(Country::all());
+		}
+	}
+	
+	
+Получение данных:
+
+	$cityApiData = Http::get(route('country.main'));
+	dd($cityApiData->body());

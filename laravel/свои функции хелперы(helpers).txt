@@ -1,0 +1,41 @@
+1. php artisan make:provider HelperServiceProvider // в laravel 11 регистрируется в -> bootstrap/providers.php
+
+	HelperServiceProvider :
+
+		public function register()
+		{
+			foreach (glob(app_path('Helpers') . '/*.php') as $file) {
+				require_once $file;
+			}
+		}
+	
+	
+2. создаем папку -> app/Helpers;
+
+
+3. app/Helpers/MyHelper.php :
+
+	<?php
+
+		if (! function_exists('hello')) {
+		
+			function hello() {
+				dd('Hello world!');
+			}
+			
+		}
+	
+
+
+4.	Загрузка провайдера: 
+
+		laravel 10 -> Открываем файл config/app.php и добавляем наш HelperServiceProvider над AppServiceProvider;
+		
+		laravel 11 -> Открываем файл bootstrap/providers.php и добавляем наш HelperServiceProvider над AppServiceProvider;
+		
+		php artisan optimize;
+
+		
+		
+В любом месте приложения: hello();
+

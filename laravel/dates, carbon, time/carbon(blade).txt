@@ -1,0 +1,4 @@
+<div class="table__cell">
+	{{ $post->created_at->setTimezone('Europe/Minsk')->format('d-m-Y, H:i:s') }}
+	{{ $post->created_at->diffForHumans() }}
+</div>

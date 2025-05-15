@@ -1,0 +1,149 @@
+/*
+    Проверяет, что:
+        - каждый элемент массива $values нормальный id
+        - количество переданных id и количество найденных по ним записей совпадают
+
+    Мягко удалённые id не найдутся.
+
+    Отличается от array.*.exists тем, что:
+        - учитывает softDeletes без ручного указания withoutTrashes
+        - делает 1 запрос вместо N
+        - ключ ошибки получается строго array, а не array.* и т.п.
+*/
+
+
+
+1. php artisan make:rule AllInModel (lesson 8 -> -1:40:00 [Дмитрий Лаврик] Фреймворк Laravel (2022))
+
+2 AllInModel:
+
+	class AllInModel implements Rule
+	{
+		protected string $model;
+
+		public function __construct($modelClass)
+		{
+			$this->model = $modelClass;
+		}
+
+		public function passes($attribute, $value)
+	
+		{
+			foreach ($value as $id) {//если вставить вручную в input значение к примеру '3a', будет найден id=3, preg_match отсекает 'a' и выкидывает ошибку(SELECT * FROM `caregories` WHERE id='3a' без preg_match проходит без ошибок)
+				if(!preg_match('/^[1-9]+\d*$/', $id)) {
+					return false;
+				}
+			}
+			$cnt = $this->model::whereIn('id', $value)->count();
+			return $cnt === count($value);
+		}
+
+		public function message()
+		{
+			return 'Oppps! Something went wrong...';
+		}
+	}
+	
+3. Request:
+
+	    public function rules()
+		{
+			return [
+				'title' => 'required',
+				'categories' => [ 'required', 'array', new AllInModel(Category::class) ],
+			];
+		}
+		
+		
+--------------------------
+
+
+1. Содать файл Enum(Enums/Users/UserRole.php):
+
+	<?php
+
+	namespace App\Enums\Users;
+
+		enum UserRole :int
+		{
+			case SUPERVISOR = 0;
+			case ADMINISTRATOR = 1;
+			case GUEST = 2;
+			case USER = 3;
+
+			public function textMessage()
+			{
+				return match ($this->value) {
+					self::SUPERVISOR->value => 'Supervisor',
+					self::ADMINISTRATOR->value => 'Админ',
+					self::GUEST->value => 'Гость',
+					self::USER->value => 'Пользователь',
+				};
+			}
+		}
+
+2. php artisan make:rule UserRoleRule
+
+
+3. app/Rules/UserRoleRule.php:
+
+		<?php
+
+		namespace App\Rules;
+
+		use App\Enums\Users\UserRole;
+		use Closure;
+		use Illuminate\Contracts\Validation\ValidationRule;
+
+		class UserRoleRule implements ValidationRule
+		{
+			/**
+			 * Run the validation rule.
+			 *
+			 * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+			 */
+
+			public function validate(string $attribute, mixed $value, Closure $fail): void
+			{
+				if(! UserRole::tryFrom($value) ) {
+					$fail('Такой роли не существует, козлятина ты хитровышморганная!');
+				}
+			}
+		}
+		
+		
+4. Использование в :
+
+		public function rules(): array
+		{
+			return [
+				'user_role' => [new SupervisorRule(1), new UserRoleRule()],
+				'user_ban' => 'required|boolean',
+				'name' => 'required',
+				'email' => 'required|email',
+				'note' => 'nullable',
+				'password' => ['nullable','confirmed', Rules\Password::defaults()]
+			];
+		}
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

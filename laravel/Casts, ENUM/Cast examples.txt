@@ -1,0 +1,112 @@
+##### EXAMPLE 1 #####
+
+	1. MODEL 
+
+		<?php
+
+			namespace App\Models;
+
+			use Illuminate\Database\Eloquent\Factories\HasFactory;
+			use Illuminate\Database\Eloquent\Model;
+			use Illuminate\Database\Eloquent\Casts\Attribute;
+
+			class DataTestFirst extends Model
+			{
+				use HasFactory;
+
+				protected $table = 'data_test_first';
+
+				protected $fillable = [
+					'count',
+				];
+
+				protected $casts = [
+					//
+				];
+
+				protected function count(): Attribute
+				{
+					return Attribute::make(
+						get: fn ($value, $attributes) =>  $attributes['count'] * 1000,
+					);
+				}
+			}
+			
+			
+	2. CONTROLLER
+
+		<?php
+
+			namespace App\Http\Controllers;
+
+			use App\Models\DataTestFirst;
+
+			class TestController extends Controller
+			{
+				public function index()
+				{
+					dd(DataTestFirst::first(1)->price);
+
+				}
+				
+			}
+			
+##### END EXAMPLE 1 #####
+
+
+##### EXAMPLE 2 #####
+
+	1. MODEL
+	
+		<?php
+
+			namespace App\Models;
+
+			use App\Casts\Product\Price;
+			use Illuminate\Database\Eloquent\Casts\Attribute;
+			use Illuminate\Database\Eloquent\Factories\HasFactory;
+			use Illuminate\Database\Eloquent\Model;
+			use Illuminate\Support\Number;
+
+			class Product extends Model
+			{
+				use HasFactory;
+
+				protected $fillable = [
+					'price',
+					...
+				];
+
+				protected $casts = [
+					'price' => Price::class,
+				];
+
+
+			}
+			
+			
+		2. CLASS
+		
+			<?php
+
+				namespace App\Casts\Product;
+
+				use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+				use Illuminate\Database\Eloquent\Model;
+
+				class Price implements CastsAttributes
+				{
+
+					public function get(Model $model, string $key, mixed $value, array $attributes): mixed
+					{
+						return $value / 100;
+					}
+
+					public function set(Model $model, string $key, mixed $value, array $attributes): mixed
+					{
+						return $value * 100;
+					}
+				}	
+
+##### END EXAMPLE 2 #####
+

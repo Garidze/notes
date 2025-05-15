@@ -1,0 +1,31 @@
+1. app/Services/PaginateCollection.php
+
+	<?php
+
+		namespace App\Services;
+
+		use Illuminate\Pagination\Paginator;
+		use Illuminate\Support\Collection;
+		use Illuminate\Pagination\LengthAwarePaginator;
+
+		class PaginateCollection
+		{
+
+			public static function paginate($collection, $perPage = 10, $options = ['path' => null, 'pageName' => 'page'], $page = null)
+			{
+				$options['path'] = $options['path'] ?: Paginator::resolveCurrentPath();
+				$page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+				$collection = $collection instanceof Collection ? $collection : Collection::make($collection);
+				return new LengthAwarePaginator($collection->forPage($page, $perPage), $collection->count(), $perPage, $page, $options);
+			}
+
+		}
+		
+		
+2. Controller
+
+        public function index()
+        {
+            $categories = PaginateCollection::paginate(DB::table('categories'), 15));
+            return view('admin.category.index', compact('categories'));
+        }

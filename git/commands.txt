@@ -1,0 +1,161 @@
+# Основные комманды:
+
+	git status
+
+	git add .
+	
+	git commit -m "0001"
+	
+	git push origin master
+
+
+
+# Настройки системы:
+
+	git config --global user.name "ProCode"
+	
+	git config --global user.email fire2point@gmail.com
+
+	git config --list
+	
+	
+	
+# Текущее состоянии репозитория:
+
+	git status
+	
+	
+	
+# Добавление файлов в коммит:
+
+	git add .
+	
+	git commit -a -m 'Add new benchmarks' // git add . + git commit -m 'Add new benchmarks'
+	
+	
+	
+# Удаление файла из коммита:
+
+	git reset css/style.css
+
+	
+	
+# Создание коммита:
+
+	git commit -m 'Title commit'
+	
+	
+	
+# Просмотр коммитов:
+
+	git log
+	
+	git log --oneline
+	
+	
+# Связка локального репозитория с удаленным
+
+	git remote add origin https://github.com/Garidze/git-test.git
+	
+	git remote set-url origin git@github.com:vicman-wi/wi-backend.git // перенастройка
+
+
+	
+# Отправка изменений на сервер:
+
+	git push origin master  //master - ветка
+	
+	git push origin master --force
+	
+
+	
+# Скачать изменения с удаленного репозитория:
+
+	git pull origin master
+	
+	
+# Удаление коммита:
+
+	git reset --hard HEAD~1
+	
+	git reset --hard bbbbbb
+	
+	
+# Внести изменения в последний коммит
+
+	git add .
+
+	git commit --amend -m "an updated commit message"
+
+	git commit --amend --no-edit
+
+	git commit --amend
+	
+	
+# Слияние коммитов в последний
+
+	1: git log --oneline (Находим первый коммит в ветке, запомнаем его sha1(прим: 79fdabe)) ;
+	
+	2: HEAD на последний коммит (прим.-> ddef6b4 (HEAD -> master, origin/master, origin/HEAD) 00005) ;
+	
+	3: git reset --soft 79fdabe ;
+	
+	4: git commit -m "00001" ;
+	
+	5: git push -f origin master .
+
+
+
+# Репозиторий на новый комп
+
+	git init
+
+	git remote add origin https://github.com/Garidze/notes.git
+	
+	git log
+	
+	
+# Proxy settings
+
+	git config --global http.proxy http://192.168.7.181:3128
+
+	
+
+		
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

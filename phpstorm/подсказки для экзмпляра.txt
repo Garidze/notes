@@ -1,0 +1,13 @@
+
+/** @var CacheManager $cache */
+$cache = app('cache');
+$cache->add('test', 123);
+
+1. Поставить курсор на переменную $cache и нажать alt + Enter;
+
+2. Выбрать -> Add PHPDoc comment;
+
+3. Указать путь класса
+
+
+Класс можно предварительно посмотреть через dd($cache = app('cache'))

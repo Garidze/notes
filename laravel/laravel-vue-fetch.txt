@@ -1,0 +1,35 @@
+1. Добавить метаданные в head:
+
+	<meta name="csrf-token" content="{{ csrf_token() }}">
+	
+2. ------------------------->
+
+	data() {
+        return {
+            price: 1000,
+            promo: '',
+            test: 'Test'
+        }
+    },
+
+    methods: {
+	
+        async sendData() {
+            let data = new Object();
+            data.test = this.test;
+
+            await fetch('http://laravel-9-data-server/promocode/check', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(data)
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(data);
+                });
+        }
+		
+    },

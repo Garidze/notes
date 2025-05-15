@@ -1,0 +1,11 @@
+Collection to array:
+
+	Post::all(['title', 'text', 'created_at'])->toArray();
+	Post::query()->get(['title', 'text', 'created_at'])->toArray();
+
+
+
+Limit:
+
+	Post::query()->limit(10)->get(['title', 'text', 'created_at']) // первые 10 постов
+	Post::query()->limit(10)->offset(12)->get() // 12 постов начиная с 10-го в базе

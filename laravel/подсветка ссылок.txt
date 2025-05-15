@@ -1,0 +1,69 @@
+[Дмитрий Лаврик] Фреймворк Laravel (2022)\Урок 4(components,подсветка ссылок) -1:09:03;
+
+1. php artisan make:component Links/Link;
+
+2. link.blade.php:
+	
+		<a href="{{ $href }}" @if($active) class="active" @endif>
+			{{ $slot }}
+		</a>
+		
+3. app/View/Components/Links/Link.php:
+		
+		<?php
+
+		namespace App\View\Components\Links;
+
+		use Illuminate\View\Component;
+		use Illuminate\Support\Facades\Route;
+
+		class Link extends Component
+		{
+			public string $href;
+			public bool $active;
+			/**
+			 * Create a new component instance.
+			 *
+			 * @return void
+			 */
+			public function __construct(string $route, array $params=[])
+			{
+				$this->href = route($route, $params);
+				$this->active = Route::currentRouteName() === $route;
+			}
+
+			/**
+			 * Get the view / contents that represent the component.
+			 *
+			 * @return \Illuminate\Contracts\View\View|\Closure|string
+			 */
+			public function render()
+			{
+				return view('components.links.link');
+			}
+		}
+		
+4. Вставка компонента:
+		
+		<x-links.link route="main">Главная</x-links.link>
+		<x-links.link route="categories.index">Все категории</x-links.link>
+		<x-links.link route="categories.edit">Редактировать категорию</x-links.link>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

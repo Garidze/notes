@@ -1,0 +1,3 @@
+
+
+php artisan migrate --path=/database/migrations/2021_12_08_134525_create_products_table.php

@@ -1,0 +1,51 @@
+https://laravel.com/docs/11.x/eloquent-relationships
+
+
+Controller:
+
+	use Illuminate\Database\Eloquent\Builder;
+	 
+	// Retrieve posts with at least one comment containing words like code%...
+
+		$posts = Product::whereHas('category', function (Builder $query) {
+			$query->where('name', 'like', 'Armchairs');
+		})->get();
+		
+		
+	 
+	// Retrieve posts with at least ten comments containing words like code%...
+
+		$posts = Product::whereHas('category', function (Builder $query) {
+			$query->where('name', 'like', 'Armchairs');
+		}, '>=', 10)->get();
+	
+	
+
+Model:
+
+<?php
+
+	namespace App\Models;
+
+	use Illuminate\Database\Eloquent\Factories\HasFactory;
+	use Illuminate\Database\Eloquent\Model;
+
+	class Product extends Model
+	{
+		use HasFactory;
+
+		protected $fillable = [
+			'category_id',
+			'name',
+			...
+		];
+
+		protected $casts = [
+			'images' => 'array',
+		];
+
+		public function category()
+		{
+			return $this->belongsTo(Category::class);
+		}
+	}

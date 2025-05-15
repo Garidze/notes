@@ -1,0 +1,111 @@
+PHP:
+
+	1-я дата:
+ 
+		дата начала 2022-05-09 09:42:37
+		дата окончания 2022-05-09 12:42:37
+		
+	2-я дата:
+	
+		дата начала 2022-05-09 10:42:37
+		дата окончания 2022-05-09 13:42:37
+		
+	алгоритм:
+	
+		(data1.start < data2.end) && (data1.end > data2.start)
+		
+		
+LARAVEL:
+
+	DB:
+	
+		public function up(): void
+			{
+				Schema::create('events', function (Blueprint $table) {
+					$table->dateTime('start');
+					$table->dateTime('end');
+				});
+			}
+			
+			
+	Controller:
+	
+		// Получаем день с событиями
+		// $validated['start']->toDateString()   -> "2024-04-08"
+        $getDayEvents = Event::whereDate('start', $validated['start']->toDateString())->get();
+
+		foreach ($getDayEvents as $getDayEvent) {
+            if($getDayEvent->start < $validated['end'] && $getDayEvent->end > $validated['start']) {
+                dd('Пересечение дат!');
+				// throw ValidationException::withMessages(['wrongTime' => 'Данный диапазон дат имеет пересечение!']);
+            }
+        }
+		
+		dd('Сохраняем данные в DB');
+		
+		
+		
+	Blade:
+		
+		{{-- Time start --}}
+		<div class="form-group">
+			<label>Время начала:</label>
+			<div class="input-group date" id="startTime" data-target-input="nearest">
+				<input type="text" class="form-control datetimepicker-input @error('start') is-invalid @enderror @error('wrongTime') is-invalid @enderror" data-target="#startTime" name="start" value="{{ old('start') }}">
+				<div class="input-group-append" data-target="#startTime" data-toggle="datetimepicker">
+					<div class="input-group-text">
+						<i class="fa fa-calendar"></i>
+					</div>
+				</div>
+			</div>
+			@error('start')
+				<small class="form-group__error">{{ $message }}</small>
+			@enderror
+			@error('wrongTime')
+				<small class="form-group__error">{{ $message }}</small>
+			@enderror
+		</div>
+		{{-- END Time start --}}
+
+		{{-- Time end --}}
+		<div class="form-group">
+			<label>Время завершения:</label>
+			<div class="input-group date" id="endTime" data-target-input="nearest">
+				<input type="text" class="form-control datetimepicker-input @error('end') is-invalid @enderror @error('wrongTime') is-invalid @enderror" data-target="#endTime" name="end" value="{{ old('end') }}">
+				<div class="input-group-append" data-target="#endTime" data-toggle="datetimepicker">
+					<div class="input-group-text">
+						<i class="fa fa-calendar"></i>
+					</div>
+				</div>
+			</div>
+			@error('end')
+				<small class="form-group__error">{{ $message }}</small>
+			@enderror
+			@error('wrongTime')
+				<small class="form-group__error">{{ $message }}</small>
+			@enderror
+		</div>
+		{{-- END Time end --}}
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

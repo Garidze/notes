@@ -1,0 +1,116 @@
+1. Настройка:
+
+	php artisan queue:table ;
+	php artisan migrate ;
+
+	
+	
+2. .env: 
+
+	QUEUE_CONNECTION=database ;
+	
+	
+3. Создание Job:
+
+	php artisan make:job ForgotPasswordEmailJob
+	
+	### ВАЖНО!!!!! ЕСЛИ В Job-е есть ссылки ### .env: APP_URL=https://table-shop.local // важна корректность адреса
+	
+	
+4. app/Jobs/ForgotPasswordJob.php :
+
+	<?php
+
+		namespace App\Jobs;
+
+		use Illuminate\Bus\Queueable;
+		use Illuminate\Contracts\Queue\ShouldQueue;
+		use Illuminate\Foundation\Bus\Dispatchable;
+		use Illuminate\Queue\InteractsWithQueue;
+		use Illuminate\Queue\SerializesModels;
+		use Illuminate\Support\Facades\Password;
+
+		class ForgotPasswordEmailJob implements ShouldQueue
+		{
+			use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+			protected $requestEmail;
+
+		
+			public function __construct($requestEmail)
+			{
+				$this->requestEmail = $requestEmail;
+			}
+
+
+			public function handle(): void
+			{
+				Password::sendResetLink($this->requestEmail);
+			}
+		}
+	
+	
+5. Controller:
+
+	<?php
+
+		namespace App\Http\Controllers\Auth;
+
+		use App\Http\Controllers\Controller;
+		use App\Jobs\ForgotPasswordEmailJob;
+		use Illuminate\Http\RedirectResponse;
+		use Illuminate\Http\Request;
+		use Illuminate\Support\Facades\Password;
+		use Illuminate\View\View;
+
+		class PasswordResetLinkController extends Controller
+		{
+
+			public function create(): View
+			{
+				return view('auth.forgot-password');
+			}
+
+			public function store(Request $request): RedirectResponse
+			{
+				$request->validate([
+					'email' => ['required', 'email', 'exists:users,email'],
+				]);
+
+				dispatch(new ForgotPasswordEmailJob($request->only('email')));  // Запуск в терминале - php artisan queue:work
+				
+				/*OR*/
+				/*ForgotPasswordEmailJob::dispatch($request->only('email'));*/
+				/*END OR*/
+
+				return redirect()->back()->with('status', __('passwords.sent'));
+
+
+
+			}
+
+		}
+		
+		
+6. Очереди записываются в DB.
+
+	# Запуск очередей в локальной разработке(в консоли):
+	
+		 php artisan queue:work ;
+		 
+	
+	# Запуск на сервере по руководству:
+	
+		- https://laravel.com/docs/11.x/queues#supervisor-configuration ;
+		
+		- https://laravel.com/docs/10.x/queues#supervisor-configuration ;
+		
+		
+		
+PS. Дополнительные комманды:
+
+	- php artisan queue:failed ; // просмотр не выполнынный Jobs
+	
+	- php artisan queue:retry all ; // перезапуск
+		
+	

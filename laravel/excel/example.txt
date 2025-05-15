@@ -1,0 +1,8 @@
+composer require maatwebsite/excel
+
+use Maatwebsite\Excel\Facades\Excel;
+public function index()
+{
+    $excelData = Excel::toCollection(null, storage_path('app/excel-file.xlsx'));
+    dd($excelData);
+}

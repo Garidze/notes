@@ -1,0 +1,20 @@
+А.  Отключение csrf-токена на маршруте:
+ 
+	1. Открываем класс - app/Http/Middleware/VerifyCsrfToken.php :
+		
+	2. Вписывает маршрут, где не нужен csrf:
+
+		protected $except = [
+			'http://laravel-9-formdata-test/form-handler',
+		];
+	
+	
+	
+	
+	
+Б. В маршрутах:
+
+	Route::get('/profile', function () {
+        // ...
+    })->withoutMiddleware(VerifyCsrfToken::class);
+

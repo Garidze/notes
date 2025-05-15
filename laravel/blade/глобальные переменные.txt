@@ -1,0 +1,19 @@
+app/Providers/AppServiceProvider.php:
+
+	use Illuminate\Support\Facades\View;
+
+
+    public function boot(): void
+    {
+        view()->composer('*', function ($view)
+        {
+            $view->with('sessionId', session()->getId());
+        });
+		
+		Facades\View::composer('*', function (View $view)
+		{
+			$view->with('sessionId', session()->getId());
+		});
+		
+        View::share('key', 'value');
+    }

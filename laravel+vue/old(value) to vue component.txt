@@ -1,0 +1,191 @@
+1. Vue component:
+	
+<template>
+    <transition name="fade">
+        <div class="form__item" v-if="isEmptySelectedValues">
+            <div class="form__label">Selected categories</div>
+            <div class="form__selected">
+
+                <template v-for="i in selectedValues">
+                    <div class="form__selectedItem" v-if="data[i]">
+                        <span>{{ data[i] }}</span>
+                        <button type="button" @click="selectRemove(i)">
+                            <picture><source srcset="img/close-icon.webp" type="image/webp"><img src="img/close-icon.png" alt="close"></picture>
+                        </button>
+                    </div>
+                </template>
+
+            </div>
+        </div>
+    </transition>
+    <div class="form__item">
+        <div class="form__label">Select category(-s)</div>
+        <div class="form__select">
+            <div class="selectBtn" @click="selectToggle">
+                <span>Select item</span>
+                <picture><source srcset="img/arrow-down.webp" type="image/webp"><img src="img/arrow-down.png" alt="choice item"></picture>
+            </div>
+            <transition name="fade">
+                <ul v-if="selectState">
+                    <li v-for="(i,n) in categories" :data-value="n" @click="selectAdd">{{i}}</li>
+                </ul>
+            </transition>
+        </div>
+        <slot name="errors"></slot>
+    </div>
+
+    <template v-for="i in selectedValues">
+<!--        <input type="hidden" v-if="data[i]" :name="'categories[' + i + ']'" :value="i">-->
+        <input type="hidden" v-if="data[i]" name="categories[]" :value="i">
+    </template>
+
+</template>
+
+<script>
+export default {
+    props: {
+        data: { type: Array },
+        oldSelect: { type: Object },
+    },
+    data() {
+        return {
+            'categories': this.data,
+            'selectState': false,
+            'selectedValues': this.oldSelect ? (this.oldSelect.filter(i=>this.data.hasOwnProperty(i))) : [],
+        }
+    },
+    methods: {
+        selectToggle() {
+            this.selectState = !this.selectState;
+        },
+        selectAdd(e) {
+            let id = e.target.getAttribute('data-value');
+            // this.selectedValues[id] = id;
+            this.selectedValues.push(id);
+            this.selectedValues = [...new Set(this.selectedValues)];
+        },
+        selectRemove(id) {
+            // delete this.selectedValues[id];
+            this.selectedValues = this.selectedValues.filter(i => i != id);
+        },
+        clickCurrentTarget(e) {
+            if(!e.target.closest('.selectBtn')) {
+                this.selectState = false;
+            }
+        },
+
+    },
+    computed: {
+        isEmptySelectedValues() {
+            let arr = this.selectedValues;
+            return arr.length > 0;
+            // return !(Object.keys(obj).length === 0 && obj.constructor === Object);
+        },
+    },
+    mounted() {
+        window.addEventListener('click', this.clickCurrentTarget);
+    },
+    unmounted() {
+        window.removeEventListener('click', this.clickCurrentTarget);
+    },
+}
+
+</script>
+
+
+
+
+2. laravel blade:
+
+<div class="wrapper" id="app">
+    <div class="content">
+
+        <section class="formSection">
+            <div class="c-container">
+                <div class="formSection__wrap">
+                    <form action="{{ route('form.store') }}" class="form" method="post">
+                        @csrf
+                        <div class="form__item">
+                            <label for="title">Title</label>
+                            <input type="text" name="title" id="title" value="{{old('title')}}">
+                            @error('title')
+                            <small>*{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        {{--multiple input--}}
+                        <select-multiple :data="{{ $data }}" :old-select="{{Js::from(old('categories'))}}">
+                            <template v-slot:errors>
+                                @error('categories')
+                                    <small>*{{ $message }}</small>
+                                @enderror
+                            </template>
+                        </select-multiple>
+                        {{--multiple input--}}
+
+                        <button class="btn btn-primary">Send</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+
+LARAVEL:
+
+	REQUEST:
+	
+		public function rules()
+		{
+			return [
+				'title' => 'required',
+				'categories' => [ 'required', 'array', new AllInModel(Category::class) ],
+			];
+		}
+
+		public function attributes()
+		{
+			return [
+				'title' => 'Title'
+			];
+		}
+
+		public function messages()
+		{
+			return [
+				'categories.required' => 'Select at least one category',
+			];
+		}
+		
+	RULE: 
+	
+		Terminal:
+	
+			php artisan make:rule AllInModel
+			
+		
+		AllInModel:
+		
+			class AllInModel implements Rule
+			{
+				protected string $model;
+
+				public function __construct($modelClass)
+				{
+					$this->model = $modelClass;
+				}
+
+				public function passes($attribute, $value)
+				{
+					$cnt = $this->model::whereIn('id', $value)->count();
+					return $cnt === count($value);
+				}
+
+				public function message()
+				{
+					return 'Oppps! Something went wrong...';
+				}
+			}
+		

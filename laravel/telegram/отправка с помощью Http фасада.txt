@@ -1,0 +1,78 @@
+1. Создаем бота Telegram:
+
+	- @BotFather:
+		/newbot; создаём нового бота, даём имя, получаем - token to access the HTTP API(пример: 7631501437:ABERTBaU207nhu8WadmRxWirV1acFdvwes4);
+		
+	- Вбиваем в поиске контактов:
+		@userinfobot; получаем свой ID(пример: Id: 987043618);
+		
+	- Полезные комманды для @BotFather:
+	
+		/mybots;
+		
+		
+2. Отправка в Telegram:
+
+
+	######### Обычная отправка #########:
+	
+	Http::get('https://api.telegram.org/bot7631501437:ABERTBaU207nhu8WadmRxWirV1acFdvwes4/sendMessage', ['chat_id' => '987043618','text' => 'Test message'])
+				
+	С прокси:
+	
+	Http::withOptions(['proxy' => '192.168.7.181:3128'])->get('https://api.telegram.org/bot7631501437:ABERTBaU207nhu8WadmRxWirV1acFdvwes4/sendMessage', [
+					'chat_id' => '987043618',
+					'text' => 'Test message'
+				])
+				
+				
+	
+				
+	######### Классы для отправки #########:
+
+		Обычный(Services/Telegram/TelegramBotSender.php):
+
+			<?php
+
+				namespace App\Services\Telegram;
+
+				use Illuminate\Support\Facades\Http;
+
+				class TelegramBotSender
+				{
+					public const URL = 'https://api.telegram.org/bot';
+
+					public static function sendMessage(string $token, int $chatId, string $message)
+					{
+						$response = Http::get(self::URL . $token . '/sendMessage', [
+							'chat_id' => $chatId,
+							'text' => $message
+						]);
+						return $response;
+					}
+
+				}
+				
+				
+		С прокси(Services/Telegram/TelegramBotProxySender.php):
+					
+			<?php
+
+				namespace App\Services\Telegram;
+
+				use Illuminate\Support\Facades\Http;
+
+				class TelegramBotProxySender
+				{
+					public const URL = 'https://api.telegram.org/bot';
+
+					public static function sendMessage(string $proxy, string $token, int $chatId, string $message)
+					{
+						$response = Http::withOptions(['proxy' => $proxy])->get(self::URL . $token . '/sendMessage', [
+							'chat_id' => $chatId,
+							'text' => $message
+						]);
+						return $response;
+					}
+
+				}

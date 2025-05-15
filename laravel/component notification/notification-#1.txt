@@ -1,0 +1,63 @@
+1. php artisan make:component notification/CustomNotification
+
+
+
+2. app/View/Components/notification/CustomNotification.php:
+
+		public bool $isActive;
+		public string $notificationType;
+		public string $message;
+
+		public function __construct()
+		{
+			$this->isActive = (session('ntf-type') && session('ntf-message'));
+			$this->notificationType = session('ntf-type') ?? '';
+			$this->message = session('ntf-message') ?? '';
+		}
+
+		public function render(): View|Closure|string
+		{
+			return view('components.notification.custom-notification');
+		}
+	 
+	 
+	 
+3. resources/views/components/notification/custom-notification.blade.php:
+
+		@if($isActive)
+			<div class="notification {{ $notificationType }}">
+				{{ $message }}
+			</div>
+		@endif
+	
+	
+	
+4. Controller:
+
+		return redirect()->route('post.index')->with(['ntf-type'=>'alert-success', 'ntf-message'=>'Post has been deleted successfully!']);
+			
+			
+5. Blade:
+
+		<x-notification.custom-notification></x-notification.custom-notification>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+	

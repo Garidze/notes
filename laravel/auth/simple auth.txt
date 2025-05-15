@@ -1,0 +1,77 @@
+1. php artisan make:controller auth/AuthController
+
+	class AuthController extends Controller
+	{
+		public function login()
+		{
+			return view('auth.login');
+		}
+
+		public function loginAttempt(AuthRequest $request)
+		{
+			$request->authenticate(); // in AuthRequest
+			$request->session()->regenerate();
+			return redirect()->route('main');
+		}
+
+		public function logout(Request $request)
+		{
+			Auth::guard('web')->logout();
+			$request->session()->invalidate();
+			$request->session()->regenerateToken();
+			return redirect()->route('login');
+		}
+	}
+	
+2. php artisan make:request auth/AuthRequest
+
+    public function rules()
+    {
+        return [
+            'email' => 'required|email',
+            'password' => 'required'
+        ];
+    }
+
+    public function authenticate() {
+        if(! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))){
+            throw ValidationException::withMessages([
+               'email' => trans('auth.failed')
+            ]);
+        }
+    }
+	
+3. web.php
+
+	Route::get('/',[PageController::class, 'index'])->name('main');
+
+	Route::middleware('auth')->group(function () {
+		Route::resource('category', CategoryController::class)->parameters(['category'=>'id']);
+		Route::resource('product', ProductController::class)->parameters(['product'=>'id']);
+	});
+
+	Route::controller(AuthController::class)->group(function (){
+		Route::middleware('guest')->group(function (){
+			Route::get('auth/login', 'login')->name('login');
+			Route::post('auth/login', 'loginAttempt')->name('login.attempt');
+		});
+		Route::post('auth/logout', 'logout')->name('logout');
+	});
+
+
+Создание тестового пользователя:
+	
+	1. php artisan make:seeder RootUser.php
+	
+	    public function run()
+		{
+			$rootUser = [
+				'name' => 'Admin',
+				'email' => 'admin@admin.com',
+				'email_verified_at' => now(),
+				'password' => Hash::make('qwerty')
+			];
+			User::create($rootUser);
+		}
+		
+	2. php artisan Db:seed RootUser

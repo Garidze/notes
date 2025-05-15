@@ -1,0 +1,9 @@
+
+
+
+$dateF = new Carbon($request->f_date);
+$dateS = new Carbon($request->s_date);
+
+$res = Post::query()->whereBetween('created_at', [$dateF, $dateS])->get();
+	OR
+$res = Post::all()->whereBetween('created_at', [$dateF, $dateS]);

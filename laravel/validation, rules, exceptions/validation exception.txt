@@ -1,0 +1,62 @@
+Controller:
+
+	public function store(Request $request)
+		{
+			$validated = $request->validate([
+				'classroom_id' => 'required|exists:classrooms,id',
+				'description' => 'required',
+				'start' => 'required|date',
+				'end' => 'required|date',
+			]);
+			if( Carbon::parse($validated['start']) >= Carbon::parse($validated['end']) ){
+				throw ValidationException::withMessages(['wrongTime' => 'Start and end time value is incorrect!']);
+			}else {
+				$validated['start'] = Carbon::parse($validated['start']);
+				$validated['end'] = Carbon::parse($validated['end']);
+			}
+			$validated['creator_id'] = $request->user()->id ?? null;
+			
+			// Получаем день с событиями
+			$getDayEvents = Event::whereDate('start', $validated['start']->toDateString())->get();
+
+			foreach ($getDayEvents as $getDayEvent) {
+				//        12.00                 15.00                13.00               14.00
+				if($getDayEvent->start < $validated['end'] && $getDayEvent->end > $validated['start']) {
+					dd('Date error!');
+				}
+			}
+			
+Blade:
+
+		{{-- Time start --}}
+		<div class="form-group">
+			<label>Время начала:</label>
+			<div class="input-group date" id="startTime" data-target-input="nearest">
+				<input type="text" class="form-control datetimepicker-input @error('start') is-invalid @enderror @error('wrongTime') is-invalid @enderror" data-target="#startTime" name="start" value="{{ old('start') }}">
+				<div class="input-group-append" data-target="#startTime" data-toggle="datetimepicker">
+					<div class="input-group-text">
+						<i class="fa fa-calendar"></i>
+					</div>
+				</div>
+			</div>
+			@error('start')
+				<small class="form-group__error">{{ $message }}</small>
+			@enderror
+			@error('wrongTime')
+				<small class="form-group__error">{{ $message }}</small>
+			@enderror
+		</div>
+		{{-- END Time start --}}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

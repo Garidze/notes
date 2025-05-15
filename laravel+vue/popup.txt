@@ -1,0 +1,65 @@
+1. PopupComponent.vue:
+
+	<template>
+		<teleport to=".wrapper">
+			<div class="popup" v-if="isOpen">
+				<form class="popup__confirm">
+					<div class="popup__title">
+						Are you sure?
+					</div>
+					<div class="popup__actions">
+						<button type="button" class="popup__btn popup__btn-secondary" @click="isOpen = false">Cancel</button>
+						<slot name="delete-button"></slot>
+					</div>
+				</form>
+			</div>
+		</teleport>
+		<button type="button" class="delete _icon-bin2" title="Delete" @click="isOpen = true"></button>
+	</template>
+
+	<script>
+	export default {
+		data() {
+		  return {
+			  isOpen: false,
+		  }
+		}
+	}
+	</script>
+	
+	
+2. index.blade.php :
+
+	@foreach($categories as $category)
+		<div class="table__cell table__cell-center">{{ $category->id }}</div>
+		<div class="table__cell">{{ $category->title }}</div>
+		<div class="table__cell">{{ $category->desc }}</div>
+		<div class="table__cell table__cell-center itemAction">
+			{{--<a href="#" class="edit _icon-more-horizontal" title="Detailed"></a>--}}
+			{{--<a href="#" class="delete _icon-bin2" title="Delete"></a>--}}
+			<a href="#" class="edit _icon-pencil" title="Edit"></a>
+			<popup-component>
+				<template v-slot:delete-button>
+					<form action="{{ route('category.destroy', $category->id) }}" method="post">
+						@csrf
+						@method('delete')
+						<button class="popup__btn popup__btn-danger">Delete</button>
+					</form>
+				</template>
+			</popup-component>
+		</div>
+	@endforeach
+				
+		
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				

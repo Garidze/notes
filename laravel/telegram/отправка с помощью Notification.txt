@@ -1,0 +1,91 @@
+1. Устанавлимаем в проект: 
+
+	composer require laravel-notification-channels/telegram
+
+
+
+2. В Telegtam:
+
+	- @BotFather:
+		/newbot; создаём нового бота, даём имя, получаем - token to access the HTTP API(пример: 7631501437:ABERTBaU207nhu8WadmRxWirV1acFdvwes4);
+		
+	- Вбиваем в поиске контактов:
+		@userinfobot; получаем свой ID(пример: Id: 987043618);
+		
+		
+3. config/services.php:
+
+    'telegram-bot-api' => [
+        'token' => env('TELEGRAM_BOT_TOKEN', '7631501437:ABERTBaU207nhu8WadmRxWirV1acFdvwes4'),
+    ],
+	
+	
+4. .env:
+
+	TELEGRAM_BOT_TOKEN=7631501437:ABERTBaU207nhu8WadmRxWirV1acFdvwes4
+	
+	(php artisan config:clear OR php artisan optimize);
+	
+	
+5. php artisan make:notification TelegramNotification :
+
+	<?php
+
+		namespace App\Notifications;
+
+		use Illuminate\Bus\Queueable;
+		use Illuminate\Contracts\Queue\ShouldQueue;
+		use Illuminate\Notifications\Messages\MailMessage;
+		use Illuminate\Notifications\Notification;
+		use NotificationChannels\Telegram\TelegramChannel;
+		use NotificationChannels\Telegram\TelegramMessage;
+
+		class TelegramNotification extends Notification
+		{
+			use Queueable;
+
+			protected $message;
+
+			public function __construct($message)
+			{
+				$this->message = $message;
+			}
+
+			public function via($notifiable)
+			{
+				return [TelegramChannel::class];
+				//return ["telegram"]; //??????
+			}
+
+			public function toTelegram($notifiable)
+			{
+				return TelegramMessage::create()
+					->content($this->message);
+			}
+
+			public function toArray($notifiable)
+			{
+				return [
+					//
+				];
+			}
+		}
+		
+		
+6. Using(пример: класс TestController):
+
+	class TestController extends Controller
+	{
+		public function index()
+		{
+			//dd(Http::withOptions(['proxy' => '192.168.7.181:3128'])->get('https://api.telegram.org/bot7631501437:ABERTBaU207nhu8WadmRxWirV1acFdvwes4/getMe'));
+			//dd(Http::get('https://api.telegram.org/bot7631501437:ABERTBaU207nhu8WadmRxWirV1acFdvwes4/getMe'));
+
+
+			Notification::route('telegram', '987043618')
+				->notify(new TestNotification('My text message'));
+
+
+			// ...do something
+		}
+	}

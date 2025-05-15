@@ -1,0 +1,90 @@
+/**
+ * First we will load all of this project's JavaScript dependencies which
+ * includes Vue and other libraries. It is a great starting point when
+ * building robust, powerful web applications using Vue and Laravel.
+ */
+
+// import './bootstrap';
+
+import { createApp } from 'vue';
+
+/**
+ * Next, we will create a fresh Vue application instance. You may then begin
+ * registering components with the application instance so they are ready
+ * to use in your application's views. An example is included for you.
+ */
+
+const app = createApp({
+    data()  {
+        return {
+            sidebarIsOpen: null,
+        }
+    },
+    methods: {
+        getCookie(cookieKey) {
+            let cookieValue = document.cookie.match('(^|;)?' + cookieKey + '=([^;]*)(;|$)');
+            return cookieValue ? cookieValue[2] : false;
+        }
+    },
+    // computed: {
+    //     //
+    // },
+    watch: {
+        sidebarIsOpen: {
+            handler(val) {
+                document.cookie = 'sidebarIsOpen=' + val + '; path=/';
+            },
+            deep: true
+        },
+    },
+    // beforeMount() {
+    //     this.state = true;
+    // }
+    mounted() {
+        this.sidebarIsOpen = this.getCookie('sidebarIsOpen') ?
+            JSON.parse(this.getCookie('sidebarIsOpen')) : false;
+    },
+});
+
+import SidebarAccordion from "./components/sidebar/SidebarAccordion.vue";
+import InputPhoto from "./components/inputs/InputPhoto.vue";
+import DelBtnIcon from "./components/edit/DelBtnIcon.vue";
+import ToastComponent from "./components/alerts/ToastComponent.vue";
+import InputEditPhoto from "./components/inputs/InputEditPhoto.vue";
+import InputProfilePhoto from "./components/inputs/InputProfilePhoto.vue";
+import SidebarComponent from "./components/sidebar/SidebarComponent.vue";
+import FilterComponent from "./components/filters/FilterComponent.vue";
+import NavDropdown from "./components/dropdowns/NavDropdown.vue";
+import SwiperSliderPopup from "./components/swiper/SwiperSliderPopup.vue";
+import ButtonWithBlocking from "./components/buttons/ButtonWithBlocking.vue";
+app.component('sidebar-accordion', SidebarAccordion);
+app.component('input-photo', InputPhoto);
+app.component('input-edit-photo', InputEditPhoto);
+app.component('del-btn-icon', DelBtnIcon);
+app.component('toast-component', ToastComponent);
+app.component('input-profile-photo', InputProfilePhoto);
+app.component('sidebar-component', SidebarComponent);
+app.component('filter-component', FilterComponent);
+app.component('nav-dropdown', NavDropdown);
+app.component('swiper-slider-popup', SwiperSliderPopup);
+app.component('button-with-blocking', ButtonWithBlocking);
+
+/**
+ * The following block of code may be used to automatically register your
+ * Vue components. It will recursively scan this directory for the Vue
+ * components and automatically register them with their "basename".
+ *
+ * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
+ */
+
+// Object.entries(import.meta.glob('./**/*.vue', { eager: true })).forEach(([path, definition]) => {
+//     app.component(path.split('/').pop().replace(/\.\w+$/, ''), definition.default);
+// });
+
+/**
+ * Finally, we will attach the application instance to a HTML element with
+ * an "id" attribute of "app". This element is included with the "auth"
+ * scaffolding. Otherwise, you will need to add an element yourself.
+ */
+
+app.mount('#app');

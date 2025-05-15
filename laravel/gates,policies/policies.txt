@@ -1,0 +1,163 @@
+1. Создание политики:
+
+	- php artisan make:policy PostPolicy ;
+	
+	
+	
+	
+2. Связка(если - app/Models/Post.php и app/Policies/PostPolicy.php - связка не нужна):
+
+	App\Providers\AuthServiceProvider:
+	
+		Post::class => PostPolicy::class,
+		
+		
+	
+3. PostPolicy:
+
+	#:
+	
+		public function canCreate(?User $user)
+		{
+			return $user
+				? Response::allow()
+				: Response::denyAsNotFound(); // 404
+		}
+	
+	#:
+	
+		public function canCreate(User $user)
+		{
+			return true;
+		}
+	
+
+    public function canEditUpdateDestroy(User $user, $id)
+    {
+        return $user->id == Post::findOrFail($id)->user_id;
+    }
+	
+	
+		
+	
+4. PostController:
+
+		#Example 1:
+
+			public function create(Request $request)
+			{
+				if($request->user()->cannot('isAdmin', Category::class)){
+					abort(401);
+				}
+				
+				return view('category.create');
+			}
+			
+		#Example 2:
+		
+			public function create()
+			{
+				$this->authorize('canCreate', Post::class);
+
+				// Do something...
+			}
+			
+			public function edit($id)
+			{
+				$this->authorize('canEditUpdateDestroy', [Post::class, $id]);
+
+				// Do something...
+			}
+
+	
+4. Использование в View:
+
+	@can('update', [App\Models\Post::class, $post->id])
+	
+		<a href="{{ route('post.edit', $post->id) }}" class="linkButton" title="Edit">Edit</a>
+		
+	@endcan
+	
+	@canany(['update', 'delete'], [App\Models\Post::class, $post->id])
+	
+		<a href="{{ route('post.edit', $post->id) }}" class="linkButton" title="Edit">Edit</a>
+		
+	@endcanany
+		
+--------------------------------------------------------------------------------
+
+web.php:
+
+	Route::put('post/update', 'loginAttempt')->name('login.attempt')->can('updade', 'post');
+	Route::put('post/update', 'loginAttempt')->name('login.attempt')->middleware('can:update,post');
+	Route::put('post/update', 'loginAttempt')->name('login.attempt')->middleware('can:update,App\Models\Post');
+
+	
+	
+// index - controller method
+public function viewAny(User $user): bool
+{
+	//
+}
+
+// show - controller method
+public function view(User $user, Post $post): bool
+{
+	//
+}
+
+// create, store - controller method
+public function create(User $user): bool
+{
+	//
+}
+
+// edit, update - controller method
+public function update(User $user, Post $post): bool
+{
+	//
+}
+
+// destroy - controller method
+public function delete(User $user, Post $post): bool
+{
+	//
+}
+
+/**
+ * Determine whether the user can restore the model.
+ */
+public function restore(User $user, Post $post): bool
+{
+	//
+}
+
+/**
+ * Determine whether the user can permanently delete the model.
+ */
+public function forceDelete(User $user, Post $post): bool
+{
+	//
+}
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

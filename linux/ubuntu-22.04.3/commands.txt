@@ -1,0 +1,119 @@
+# hostname -I
+
+# sudo systemctl status apache2
+
+# sudo systemctl start apache2
+
+# sudo systemctl restart apache2
+
+# sudo systemctl start mysql
+
+# sudo systemctl restart mysql
+
+# вывести рабочую директорию:
+
+	pwd
+
+# Изменение прав доступа на папку из под root:
+
+	root@web:/var/www/procode# sudo chown -R procode:procode storage
+
+# очистка каталога: rm -rf /tmp/folder/*
+
+# перезагрузка через терминал -> reboot
+
+# выключение -> reboot -p
+
+# ls -la
+
+# Список всех групп в файле -> /etc/group
+
+# Копирование файла:
+
+	sudo cp /etc/vsftpd.conf /etc/vsftpd.conf.copy
+	
+# Включение-отключение конфигурации сайта:
+
+	sudo a2ensite your_domain.conf ,
+	
+	sudo a2dissite 000-default.conf ;
+	
+# Переназначение домашней папки пользователя:
+
+	usermod -md /var/www/your_domain user_name ;
+	
+# Создать пользователя:
+
+	useradd procode -d /var/www/procode -m ;
+	
+# Удалить пользователя:
+
+	deluser user_name --remove-all-files
+	
+# Открытые порты:
+
+	netstat -ntlp
+	
+# Добавление нового пользователя в определенном каталоге:
+
+	useradd procode -m -d /var/www/procode ;
+			
+	passwd procode ;
+			
+	sudo chown -R procode:www-data /var/www/procode
+	
+# Добавление новой группы:
+
+	sudo addgroup new_group_name
+	
+# Добавление существующего пользователя в группу:
+
+	sudo usermod -a -G groupname username
+	
+# Создание нового пользователя и добавление его в группу:
+
+	sudo useradd -m new_user_name -g group_name
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

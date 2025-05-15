@@ -1,0 +1,213 @@
+1. app/Enums/Locales.php:
+
+    <?php
+
+    	namespace App\Enums;
+
+    	enum Locales : string
+    	{
+            case RU = 'RU';
+
+            case EN = 'EN';
+
+    	}
+
+
+2. app/Http/Middleware/LocaleMiddleware.php:
+
+        public function handle(Request $request, Closure $next): Response
+        {
+            if(!session()->has('locale')){
+                session()->put('locale', Locales::EN->value);
+            }
+            app()->setLocale(session('locale'));
+
+            return $next($request);
+        }
+
+
+3. app/Http/Controllers/LocaleController.php:
+
+        public function setLocale($locale)
+        {
+            if(!Locales::tryFrom($locale)) {
+                session()->put('locale', Locales::EN->value);
+            }else {
+                session()->put('locale', $locale);
+            }
+            app()->setLocale(session('locale'));
+            return back();
+        }
+
+
+4. Http/Middleware/HandleInertiaRequests.php:
+
+    public function share(Request $request): array
+        {
+            [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+
+            $langFile = lang_path( app()->currentLocale() . ".json" );
+
+            $locales = [];
+
+            foreach (\App\Enums\Locales::cases() as $locale) {
+                array_push($locales, $locale->name);
+            }
+
+            return [
+                ...parent::share($request),
+                'name' => config('app.name'),
+                'quote' => ['message' => trim($message), 'author' => trim($author)],
+                'auth' => [
+                    'user' => $request->user(),
+                ],
+                'ziggy' => [
+                    ...(new Ziggy)->toArray(),
+                    'location' => $request->url(),
+                ],
+                'translations' => File::exists( $langFile ) ? File::json( $langFile ) : [],
+                'locales' => $locales,
+                'locale' => session('locale'),
+            ];
+        }
+
+
+5. bootstrap/app.php (LocaleMiddleware::class должен быть выше чем HandleInertiaRequests::class)
+
+    return Application::configure(basePath: dirname(__DIR__))
+        ->withRouting(
+            web: __DIR__.'/../routes/web.php',
+            commands: __DIR__.'/../routes/console.php',
+            health: '/up',
+        )
+        ->withMiddleware(function (Middleware $middleware) {
+            $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+
+            $middleware->web(append: [
+                HandleAppearance::class,
+                LocaleMiddleware::class,
+                HandleInertiaRequests::class,
+                AddLinkHeadersForPreloadedAssets::class,
+            ]);
+
+            $middleware->alias([
+                'locale' => LocaleMiddleware::class,
+            ]);
+        })
+        ->withExceptions(function (Exceptions $exceptions) {
+            //
+        })->create();
+
+
+6. resources/js/composables/trans.js(создать нужно):
+
+    import { usePage } from "@inertiajs/vue3";
+
+    export function useTrans(value) {
+        const array = usePage().props.translations;
+
+        return array[ value ] != null ? array[ value ] : value;
+    }
+
+
+7. resources/js/pages/auth/Login.vue:
+
+    <Label for="email" v-text="useTrans('Email Address')"></Label>
+
+
+8. resources/js/components/custom/dropdown/LangNavDropdown.vue:
+
+    <template>
+        <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+            <!-- Locale dropdown -->
+            <div class="relative mr-2 inline-block text-left" :class="{ active: isOpen }" id="localeDropdown">
+                <!--Header-->
+                <div>
+                    <button
+                        type="button"
+                        @click="isOpen = !isOpen"
+                        :class="classes"
+                    >
+                        {{ currentLocale }}
+                        <svg
+                            class="localeDropdownArrow -mr-1 size-5 text-gray-400"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true"
+                            data-slot="icon"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                    </button>
+                </div>
+                <!--END Header-->
+
+                <!--Dropdown list-->
+                <transition name="fade">
+                    <div v-if="isOpen" class="absolute right-0 z-10 mt-px origin-top-right bg-white shadow-lg focus:outline-hidden">
+                        <div v-for="locale in locales" :key="locale">
+                            <!-- Active: "bg-gray-100 text-gray-900 outline-hidden", Not Active: "text-gray-700" -->
+                            <a v-if="locale !== currentLocale"
+                               :href="route('locale.set-locale', locale)"
+                               class="block px-2 py-1 text-sm font-medium text-gray-700"
+                               role="menuitem"
+                               tabindex="-1"
+                            >
+                                {{ locale }}
+                            </a>
+                        </div>
+                    </div>
+                </transition>
+                <!--END Dropdown list-->
+            </div>
+            <!-- END Locale dropdown -->
+        </div>
+    </template>
+
+    <script lang="ts">
+    export default {
+        props: {
+            currentLocale: { type: String, default: 'RU' },
+            locales: { type: Array },
+            classes: { type: String }
+        },
+        data() {
+            return {
+                isOpen: false,
+            };
+        },
+        methods: {
+            close(elem) {
+                if (!elem.target.closest('#localeDropdown')) this.isOpen = false;
+            },
+        },
+        beforeMount() {
+            document.addEventListener('click', this.close);
+        },
+        unmounted() {
+            document.removeEventListener('click', this.close);
+        },
+    };
+    </script>
+
+
+9. resources/js/pages/Welcome.vue:
+
+    <script setup lang="ts">
+    import { Head, Link } from '@inertiajs/vue3';
+    import LangNavDropdown from "@/components/custom/dropdown/LangNavDropdown.vue";
+    </script>
+
+    <template>
+        <LangNavDropdown
+            :current-locale="$page.props.locale"
+            :locales="$page.props.locales"
+            classes="inline-flex w-full justify-center bg-white px-2 py-1 text-sm font-medium text-gray-900 border border-[#19140035] hover:cursor-pointer hover:bg-gray-50 rounded-sm"
+        />
+    </template>
+
+

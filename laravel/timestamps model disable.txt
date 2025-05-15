@@ -1,0 +1,7 @@
+in Model:
+
+	public $timestamps = false;
+	
+in migration delete:
+
+	$table->timestamps();

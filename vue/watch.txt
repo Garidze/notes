@@ -1,0 +1,17 @@
+
+
+		data() {
+			return {
+				imagesList: this.imagesObj,
+
+			}
+		},
+
+		watch: {
+			imagesList: {
+				handler(val, oldVal) {
+					this.dataPrepare();
+				},
+				deep: true
+			},
+		},

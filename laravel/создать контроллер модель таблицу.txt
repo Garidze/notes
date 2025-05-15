@@ -1,0 +1,13 @@
+A:
+
+	1. php artisan make:model Product -m -c // -m(migration) -c(controller)
+	
+	2. php artisan make:controller ProductController
+
+	
+	
+B:
+
+	1. php artisan make:controller ProductController --model=Product --resource --requests
+
+	2. php artisan make:migration create_products_table r

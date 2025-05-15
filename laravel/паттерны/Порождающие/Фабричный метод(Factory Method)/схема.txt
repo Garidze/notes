@@ -1,0 +1,20 @@
+-> IDelivery(interface)	
+	
+		
+-> AbstractDelivery(abstract class)
+
+
+
+-> DeliveryTruck(class extends AbstractDelivery) 
+
+	-> DeliveryByTruck(class implements IDelivery)
+	
+	
+
+-> DeliveryTrain(class extends AbstractDelivery) 
+
+	-> DeliveryByTrain(class implements IDelivery)
+	
+	
+	
+-> TestController.php

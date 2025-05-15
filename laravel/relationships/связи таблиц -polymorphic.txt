@@ -1,0 +1,186 @@
+1. php artisan make:model Comment --migration
+
+	
+2. Миграция:
+
+	public function up()
+    {
+        Schema::create('comments', function (Blueprint $table) {
+            $table->id();
+            $table->text('comment');
+            $table->morphs('commentable'); // Полиморфная связь
+            $table->timestamps();
+        });
+    }
+	
+	php artisan migrate
+	
+3. Модель:
+	
+	Comment:
+
+		class Comment extends Model
+		{
+			use HasFactory;
+
+			protected $fillable = [
+				'comment'
+			];
+
+			public function commentable() {
+				return $this->morphTo();
+			}
+		}
+		
+	Vacation:
+	
+		class Vacation extends Model
+		{
+			use HasFactory;
+
+			protected $table = 'vacation';
+
+			protected $fillable = [
+				'title',
+				'desc',
+			];
+
+			public function comments() {
+				return $this->morphMany(Comment::class, 'commentable');
+			}
+		}
+		
+	Work:
+	
+		class Work extends Model
+		{
+			use HasFactory;
+
+			protected $table = 'work';
+
+			protected $fillable = [
+				'title',
+				'desc',
+			];
+
+			public function comments() {
+				return $this->morphMany(Comment::class, 'commentable');
+			}
+		}
+	
+4. Контроллер:
+
+	CommentController:
+	
+		<?php
+
+		namespace App\Http\Controllers;
+
+		use App\Http\Requests\Comment\Add as CommentAdd;
+		use App\Models\Vacation;
+		use App\Models\Work;
+
+		class CommentController extends Controller
+		{
+
+			const FOR_MODELS = [
+				'vacation' => Vacation::class,
+				'work' => Work::class
+			];
+			
+
+			public function store(CommentAdd $request)
+				{
+					$modelName = self::FOR_MODELS[$request->for];
+					$model = $modelName::findOrFail($request->id);
+					$model->comments()->create($request->only(['comment']));
+				}
+
+		}
+		
+	VacationController:
+	
+		public function show($id)
+			{
+				$vacation = Vacation::findOrFail($id);
+				return view('vacation.show', compact('vacation'));
+			}
+			
+5. Request:
+
+	public function rules()
+		{
+			return [
+				'comment' => 'required',
+				'id' => 'required|integer',
+				'for' => 'required|in:vacation,work'
+			];
+		}
+	
+6. Шаблон:
+
+	<form action="{{ route('comment.store') }}" method="post" style="padding: 10px 0;">
+		@csrf
+		<div class="formItem">
+			<label for="comment" style="margin-bottom: 6px;">Leave comment</label>
+			<textarea rows="4" name="comment" id="comment" value="{{ old('comment') }}"></textarea>
+			<input type="hidden" name="id" value="{{ $vacation->id }}">
+			<input type="hidden" name="for" value="vacation">
+			@error('comment')
+			<small>*{{ $message }}</small>
+			@enderror
+
+			{{--@error('id')--}}
+			{{--<small>*{{ $message }}</small>--}}
+			{{--@enderror--}}
+			{{--@error('for')--}}
+			{{--<small>*{{ $message }}</small>--}}
+			{{--@enderror--}}
+
+		</div>
+		<button class="btn btn-primary">Send</button>
+	</form>
+	
+	@if(!$vacation->comments->isEmpty())
+		<div class="feedback__title">
+			<h4>Отзывы:</h4>
+		</div>
+		<div class="feedback__list">
+			@foreach($vacation->comments as $comment)
+				<div class="feedback__item">
+					<div><span>{{$comment->created_at}}</span></div>
+					<p>{{$comment->comment}}</p>
+				</div>
+			@endforeach
+		</div>
+	@else
+		<div class="feedback__null">Пока ещё нет отзывов об этом товаре...</div>
+	@endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

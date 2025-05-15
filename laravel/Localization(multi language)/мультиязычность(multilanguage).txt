@@ -1,0 +1,204 @@
+1. Enums/Locales.php:
+
+		<?php
+
+		namespace App\Enums;
+
+		enum Locales :string
+		{
+			case RU = 'ru';
+			case EN = 'en';
+
+			public function textMessage()
+			{
+				return match ($this->value) {
+					self::RU->value => 'Ru',
+					self::EN->value => 'En',
+				};
+			}
+		}
+		
+		
+2. resources/js/components/LocaleComponent.vue :
+
+		<template>
+			<ul class="headerLocale">
+				<li class="headerLocale__current" @click="listState = !listState">{{ currentLocale }}</li>
+				<div class="icon _icon-arrow_drop_down"  @click="listState = !listState"></div>
+				<ul class="headerLocale__list" v-if="listState">
+					<slot/>
+				</ul>
+			</ul>
+		</template>
+
+		<script>
+		export default {
+			props: {
+			  currentLocale: { type: String, default: 'Not defined!' }
+			},
+			data() {
+				return {
+					listState: false,
+				}
+			},
+			methods: {
+
+			}
+		}
+		</script>
+		
+		
+3. Blade:
+
+		<locale-component current-locale="{{ Str::ucfirst($currentLocale) }}" v-cloak>
+			@foreach(\App\Enums\Locales::cases() as $case)
+				@if($currentLocale != $case->value)
+					<li><a href="{{ route('set-locale', $case) }}">{{$case->textMessage()}}</a></li>
+				@endif
+			@endforeach
+		</locale-component>
+		
+		
+4. Route & Controller:
+
+		Route::get('locale/{locale}', [PageController::class, 'setLocale'])->name('set-locale');
+
+		public function setLocale(Request $request, $locale) {
+			if(! Locales::tryFrom($locale)) abort(500);
+			session(['locale' => $locale]);
+			return back();
+		}
+		
+		
+5. Http/Middleware/SetLocale.php
+
+		public function handle(Request $request, Closure $next): Response
+		{
+			if(!session()->has('langSiteType')){
+				session()->put('langSiteType', config('app.locale'));
+			};
+
+			app()->setLocale(session('langSiteType'));
+
+			return $next($request);
+		}
+		
+		
+6. Применяется к роутам:
+
+		Route::middleware(['guest', 'set-locale'])->group(function () {
+			Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
+			Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
+			...
+		});
+		
+		
+Применение:
+
+
+VER#1:
+
+	<div class="welcome__title">{!! __('pages.titles.welcome_title') !!}</div>
+	
+	
+	-lang/en/pages/titles.php:
+		
+		<?php
+
+		return [
+			'welcome_title' => 'Welcome!',
+
+		];
+		
+		
+	-lang/ru/pages/titles.php:
+		
+		<?php
+
+		return [
+			'welcome_title' => 'Добро пожаловать!',
+
+		];
+		
+		
+	VER#2:
+	
+	<div class="welcome__title">{!! __('pages.titles.main.welcome_title') !!}</div>
+	
+	
+	-lang/en/pages/titles.php:
+		
+		<?php
+
+		return [
+		
+			'main' => [
+				'welcome_title' => 'Welcome!'
+			],
+			
+		];
+		
+		
+	-lang/ru/pages/titles.php:
+		
+		<?php
+
+		return [
+			'main' => [
+				'welcome_title' => 'Добро пожаловать!'
+			],
+		];
+
+
+#####JSON#####
+
+	W:\web-projects\laravel-11-test\lang
+
+		en.json
+		
+			{
+			
+				"About": "About"
+			
+			}
+			
+		ru.json
+		
+			{
+			
+				"About": "О нас"
+			
+			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

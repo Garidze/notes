@@ -1,0 +1,145 @@
+1. Создаем модель и миграцию: php artisan make:model Product -m ;
+
+	Модель:
+	
+		public $timestamps = false;
+
+	Миграция:
+	
+		public function up()
+		{
+			Schema::create('products', function (Blueprint $table) {
+				$table->id();
+				$table->string('name');
+				$table->text('desc')->nullable();
+			});
+		}
+		
+	Terminal run:
+		
+		php artisan migrate ; // or
+		
+		php artisan migrate --path=/database/migrations/2021_12_08_134525_create_products_table.php
+	
+	
+
+
+2. Создаем Factory: php artisan make:factory ProductFactory
+
+	public function definition()
+	{
+		return [
+			'name' => fake()->name(),
+			'desc' => fake()->text(),
+		];
+	}
+	
+
+
+3. Создаем Seeder: php artisan make:seeder ProductSeeder
+
+	use App\Models\Product;
+	
+	public function run()
+	{
+		Product::factory(10)->create();
+	}
+	
+
+	
+4. Terminal run: 
+	
+	php artisan db:seed --class=ProductSeeder
+    
+-----------------------------------------------------------------------
+	
+Для запуска массового Seeder вписываем в файл DatabaseSeeder метода run(database/seeders/DatabaseSeeder.php):
+
+	    public function run()
+		{
+
+			// \App\Models\User::factory(10)->create();
+
+			$this->call([
+				ProductSeeder::class,
+				OtherSeeder::class,
+				...
+			]);
+
+		}
+		
+		Terminal run:
+		
+			php artisan db:seed
+			
+------------------------------------------------------------------------
+
+Комплексное создание модели-миграции-фабрики-контроллера-сидера:
+    php artisan make:model Product -mfcs ;
+	
+------------------------------------------------------------------------
+
+Faker:
+
+	https://github.com/FakerPHP/Faker
+	
+	
+	
+	
+	
+	
+	
+-------Из своего массива с фабрикой-------
+
+Factory:
+
+	public function definition()
+	{
+		$names = $this->faker->unique()->randomElement(['Phones', 'Tablet', 'Notebooks', 'PC']);
+		return [
+			'name' => $names,
+			'desc' => fake()->realText(),
+		];
+	}
+	
+Seeder:
+
+	public function run()
+	{
+		Product::factory(4)->create();
+	}
+		
+		
+------- END Из своего массива с фабрикой-------
+
+---------------------------------------------------------------------------------------------------------
+
+-------Из своего массива без фабрики-------
+
+Seeder:
+	
+	public function run()
+	{
+		$names = ['one', 'two', 'three', 'four'];
+		foreach ($names as $name) {
+			Category::create([
+				'name' => $name,
+				'desc' => fake()->realText(),
+			]);
+		}
+
+	}
+	
+-------END Из своего массива без фабрики-------
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

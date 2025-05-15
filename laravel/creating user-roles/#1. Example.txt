@@ -1,0 +1,141 @@
+1. Создание модели и миграции Role:
+	
+	php artisan make:model Role -m
+
+
+2. Для модели Role - migtation, model, seeder:
+
+	Migration - 2023_02_22_070617_create_roles_table.php:
+	 
+	 public function up()
+    {
+        Schema::create('roles', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();
+            $table->string('desc')->nullable();
+        });
+    }
+	
+	Model:
+	
+		public $timestamps = false;
+		
+	Seeder:
+	
+		- php artisan make:seeder RoleSeeder:
+		
+			use App\Models\Role;
+			public function run()
+			{
+				Role::create(['name'=>'admin','desc'=>'General account']);
+				Role::create(['name'=>'writer','desc'=>'Writer account']);
+				Role::create(['name'=>'moderator','desc'=>'Moderator account']);
+				Role::create(['name'=>'commentator','desc'=>'General account']);
+			}
+			
+		- php artisan Db:seed RoleSeeder
+		
+		
+3. Сводная таблица для Role User(название от моделей по алфавиту):
+
+	- php artisan make:migration create_role_user_table :
+	
+		use App\Models\Role;
+		use App\Models\User;
+		public function up()
+		{
+			Schema::create('role_user', function (Blueprint $table) {
+				$table->id();
+				$table->foreignIdFor(Role::class)->constrained();
+				$table->foreignIdFor(User::class)->constrained();
+				$table->timestamps();
+			});
+		}
+		
+	- php artisan migrate;
+	
+	
+4. Определение связей в моделях:
+
+	User:
+	
+		public function roles() {
+			return $this->belongsToMany(Role::class);
+		}
+		
+	Role:
+	
+		public function users() {
+			return $this->belongsToMany(User::class);
+		}
+	
+	
+-----------------------------------------------------------------
+Пример организации доступа через Gate:
+-----------------------------------------------------------------
+
+Defining gates:
+
+App\Providers\AuthServiceProvider:
+
+	use Illuminate\Support\Facades\Gate;
+	public function boot()
+	{
+		$this->registerPolicies();
+
+		Gate::define('is-admin', function (User $user) {
+			return $user->roles()->where('name','Admin')->count() > 0;
+		});
+	}
+	
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+Наполнение таблиц:
+-----------------------------------------------------------------
+
+User table root user:
+
+	php artisan make:seeder RootUserSeeder :
+
+		public function run()
+		{
+			$rootUser = [
+				'name' => 'Admin',
+				'email' => 'admin@admin.com',
+				'email_verified_at' => now(),
+				'password' => Hash::make('qwerty')
+			];
+			User::create($rootUser);
+		}
+		
+-----------------------------------------------------------------
+	
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

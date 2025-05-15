@@ -1,0 +1,17 @@
+1. openserver->настройки->модули:	
+
+	- выбираем версию redis
+
+	
+2. openserver->дополнительно->конфигурация->php:
+
+	extension = redis //раскомментировать
+	
+	
+3. настройки Laravel .env:
+
+	SESSION_DRIVER=redis
+	
+	CACHE_DRIVER=redis
+
+	

@@ -1,0 +1,14 @@
+
+При удалении категории, связанные продукты(category_id) устанавливаются в NULL
+	
+	public function up(): void
+    {
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(\App\Models\Category::class)->nullable()->onstrained()->cascadeOnUpdate()->nullOnDelete();
+            $table->string('name');
+            $table->string('description')->nullable();
+            $table->integer('price')->unsigned()->default(0);
+            $table->timestamps();
+        });
+    }

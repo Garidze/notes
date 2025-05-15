@@ -1,0 +1,69 @@
+1. Interface - PropertyContainerInterface:
+
+    <?php
+
+        namespace App\Services\Property;
+
+        interface PropertyContainerInterface
+        {
+            public function addProperty($propName, $propValue);
+
+            public function getProperty($propName);
+
+            public function allProperty();
+
+            public function editProperty($propName, $propValue);
+            public function delProperty($propName);
+        }
+
+
+2. Class - PropertyContainer:
+
+    <?php
+
+        namespace App\Services\Property;
+
+        class PropertyContainer implements PropertyContainerInterface
+        {
+            private array $propertyContainer;
+
+            public function addProperty($propName, $propValue)
+            {
+                $this->propertyContainer[$propName] = $propValue;
+            }
+
+            public function getProperty($propName)
+            {
+                return $this->propertyContainer[$propName] ?? null;
+            }
+
+            public function allProperty()
+            {
+                return $this->propertyContainer;
+            }
+
+            public function editProperty($propName, $propValue)
+            {
+                if(!isset($this->propertyContainer[$propName])){
+                    throw new \Exception("Property - $propName, not found!");
+                }
+                $this->propertyContainer[$propName] = $propValue;
+            }
+
+            public function delProperty($propName)
+            {
+                unset($this->propertyContainer[$propName]);
+            }
+
+        }
+
+
+3. Controller:
+
+    public function index()
+    {
+        $container = new PropertyContainer();
+        $container->addProperty('USD', 'usd');
+        $container->addProperty('EUR', 'eur');
+        dd($container->allProperty());
+    }

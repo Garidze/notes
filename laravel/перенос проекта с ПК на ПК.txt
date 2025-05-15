@@ -1,0 +1,21 @@
+1. Переносим проект без папок vendor и node_modules;
+
+2. В папке выполняем комманду:
+		composer install --ignore-platform-reqs (либо удаляем файл composer.lock и выполняем комманду - composer install);
+		
+3. В папке выполняем комманду:
+		npm i;
+
+---ПО НЕОБХОДИМОСТИ---
+		
+4. Настраиваем подключение к БД(если необходимо):
+		- перенести БД,
+		- настроить файл .env;
+		
+5. Чистим:
+		- php artisan config:clear,
+		- php artisan cache:clear,
+		
+		
+Возможна ошибка:
+		-in finder.php line 588 - ошибка настройки модулей Open Server(должны совпадать с модулями на старом Open Server)

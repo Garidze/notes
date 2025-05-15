@@ -1,0 +1,67 @@
+1. HTML
+
+	<button @click="sidebarIsOpen = !sidebarIsOpen">Click</button>
+	
+	
+2. VUE component
+
+	data() {
+			return {
+				sidebarIsOpen: null,
+			}
+		},
+		methods: {
+			getCookie(cookieKey) {
+				let cookieValue = document.cookie.match('(^|;)?' + cookieKey + '=([^;]*)(;|$)');
+				return cookieValue ? cookieValue[2] : false;
+			}
+		},
+		watch: {
+			sidebarIsOpen: {
+				handler(val) {
+					document.cookie = 'sidebarIsOpen=' + val + '; path=/';
+				},
+				deep: true
+			},
+		},
+		mounted() {
+			this.sidebarIsOpen = this.getCookie('sidebarIsOpen') ?
+				JSON.parse(this.getCookie('sidebarIsOpen')) : false;
+		},
+		
+		
+3.  Laravel 11 settings:
+
+		app/Http/Middleware/EncryptCookies.php:
+		
+			<?php
+
+			namespace App\Http\Middleware;
+
+			use Illuminate\Cookie\Middleware\EncryptCookies as Middleware;
+
+			class EncryptCookies extends Middleware
+			{
+				/**
+				 * The names of the cookies that should not be encrypted.
+				 *
+				 * @var array<int, string>
+				 */
+				protected $except = [
+					'sidebarIsOpen'
+				];
+			}
+			
+	Laravel 12 settings:
+	
+		app/Providers/AppServiceProvider.php:
+		
+			public function boot(): void
+			{
+				EncryptCookies::except('sidebarIsOpen');
+			}
+		
+		
+4. USE:
+
+	<body class="hold-transition sidebar-mini layout-fixed @if(json_decode(Cookie::get('sidebarIsOpen'))) sidebar-collapse @endif">

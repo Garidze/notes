@@ -1,0 +1,31 @@
+Class(path: App\Services\Filters\Population):
+
+	<?php
+
+		namespace App\Services\Filters;
+		use Illuminate\Support\Facades\Cache;
+		use App\Models\Country;
+
+		class Population
+		{
+			static function minPopulation()
+			{
+				if(!Cache::has('minPopulation')) Cache::put('minPopulation', Country::min('Population'), 3600);
+				return Cache::get('minPopulation');
+			}
+
+			static function maxPopulation()
+			{
+				if(!Cache::has('maxPopulation')) Cache::put('maxPopulation', Country::max('Population'), 3600);
+				return Cache::get('maxPopulation');
+			}
+
+		}
+		
+		
+USE(in blade):
+
+    <population-country
+        min-population="{{ App\Services\Filters\Population::minPopulation() }}"
+        max-population="{{ App\Services\Filters\Population::maxPopulation() }}"
+    ></population-country>

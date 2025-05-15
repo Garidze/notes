@@ -1,0 +1,215 @@
+1. Radio ---------------------------------
+
+<div class="content" id="app">
+	<div class="section">
+		<div class="c-container">
+			<div class="section__body">
+				<div class="wrap">
+					<label>
+						<input type="radio" value="green" v-model="color" name="col">
+						<p>Green</p>
+					</label>
+					<label>
+						<input type="radio" value="blue" v-model="color" name="col">
+						<p>Blue</p>
+					</label>
+					<br>
+					<div  style="padding: 10px;" :class="setClass">Selected radio: {{ color }}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+data() {
+	return {
+		color: 'green'
+	}
+},
+computed: {
+	setClass() {
+		return {
+			'bgColBl': this.color == 'blue',
+			'bgColGr': this.color == 'green',
+		}
+	}
+}
+
+
+2. Checkbox---------------------------------
+
+<div class="content" id="app">
+	<div class="section">
+		<div class="c-container">
+			<div class="section__body">
+				<div class="wrap">
+					<div v-for="(val, key) in colorClasses">
+						<label>
+							<input type="checkbox" value="green" v-model="colorClasses[key]" name="bg">
+							<p>{{ key }}</p>
+						</label>
+					</div>
+					<br>
+					<div  style="padding: 10px;" :class="colorClasses">Selected radio: {{ color }}</div>
+					<br>
+					{{colorClasses}}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+let practice = Vue.createApp({
+    data() {
+        return {
+            colorClasses: {
+                'bgColBl': false,
+                'bgColGr': false
+            }
+        }
+    }
+})
+practice.mount('#app')
+
+3. Checkbox(2)-----------------------------
+
+<div class="section">
+	<div class="c-container">
+		<div class="section-body">
+			<label>
+				<input type="checkbox" value="dataf" v-model="checkboxArr.dataf">
+				<p>Data F</p>
+			</label>
+			<label>
+				<input type="checkbox" value="dataS" v-model="checkboxArr.datas">
+				<p>Data S</p>
+			</label>
+			<label>
+				<input type="checkbox" value="dataT" v-model="checkboxArr.datat">
+				<p>Data T</p>
+			</label>
+			{{ checkboxArr }}
+		</div>
+	</div>
+</div>
+
+let practice = Vue.createApp({
+    data() {
+        return {
+            checkboxArr: {
+                dataf: false,
+                datas: false,
+                datat: false
+            }
+        }
+    },
+    methods: {
+
+    },
+    computed: {
+
+    },
+    watch: {
+
+    },
+    mounted() {
+
+    }
+})
+practice.mount('#app')
+
+4. Styles -----------------------------
+
+	-----VER-1-----
+
+	<div class="task" v-for="(i, n) in toDoList" :class="todoCurrentClass(i)">
+		<h2>{{ i.title }}</h2>
+		<p>Current: {{ i.current }}</p>
+		<p>Limit: {{ i.max }}</p>
+		<h3 v-if="i.current >= i.max">Task Done!</h3>
+		<button type="button" @click="makeTask(n)" v-else>Do Task</button>
+	</div>
+
+	let practice = Vue.createApp({
+		data() {
+			return {
+				toDoList: [
+					{title: 'Task № 1', current: 0, max: 3},
+					{title: 'Task № 2', current: 0, max: 5},
+					{title: 'Task № 3', current: 0, max: 6},
+				]
+			}
+		},
+		methods: {
+			makeTask(n) {
+				let todoEl = this.toDoList[n];
+				if(todoEl.current < todoEl.max) {
+					todoEl.current++;
+				}
+			},
+			todoCurrentClass(i) {
+				let percent = i.current / i.max;
+				return {
+					'bgRed': percent < 0.25,
+					'bgYellow': percent > 0.25 && percent < 0.9,
+					'bgGreen': percent > 0.9,
+				}
+			}
+		}
+	})
+	practice.mount('#app')
+	
+	-----END VER-1-----
+	
+	-----VER-2-----
+	
+	<div class="test">
+
+		<pre>{{isActive}}</pre>
+		<div class="block" :style="{'color': isColor}">TEST</div>
+		<button @click="isActive = !isActive" class="btn btn-primary">click</button>
+
+	</div>
+	
+	data() {
+		isActive: false,
+		color: 'red'
+		}
+	},
+	
+	computed: {
+		isColor() {
+			return this.isActive ? 'red' : 'green'
+		}
+	},
+	
+	-----END VER-2-----
+
+5. Classes-----------------------------------
+
+	<div class="formItemIcon" :class="valid ? '_icon-check-circle' : '_icon-exclamation-circle'"></div>
+	
+	data() {
+	
+		return {
+			valid: true, // false
+		}
+		
+	},
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

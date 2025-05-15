@@ -1,0 +1,96 @@
+РАБОТА ЧЕРЕЗ app/Providers/RouteServiceProvider.php:
+
+		protected function configureRateLimiting(): void
+		{
+			// 60 запросов в минуту
+			RateLimiter::for('api', function (Request $request) {
+				return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+			});
+			
+			// 100 запросов в час
+			RateLimiter::for('test1', function (Request $request) {
+				return Limit::perHour(60)->by($request->user()?->id ?: $request->ip());
+			});
+			
+			// 10 запросов в минуту
+			RateLimiter::for('test2', function (Request $request) {
+				return Limit::perMinute(10)->by($request->user()?->id ?: $request->ip());
+			})
+			
+			// 5 запросов в 10 минут
+			RateLimiter::for('main', function (Request $request) {
+				return Limit::perMinutes(10, 5)->by($request->user()?->id ?: $request->ip());
+			});
+			
+			RateLimiter::for('uploads', function (Request $request) {
+				return $request->user()->vipCustomer()
+							? Limit::none()
+							: Limit::perMinute(100)->by($request->user()?->id ?: $request->ip());
+			});
+		}
+	
+	
+	ПРИМЕНЯЕТСЯ К:
+		
+		app/Http/Kernel.php:
+
+			protected $middlewareGroups = [
+				...
+
+				'api' => [
+					...
+					\Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+					...
+				],
+			];
+	
+	
+		ДРУГОЕ ПРИМЕНЕНИЕ:
+
+			В контроллере:
+			
+				public function __construct()
+				{
+					$this->middleware('throttle:api');
+					$this->middleware('throttle:test1');
+					$this->middleware('throttle:test2');
+					
+					// OR
+					
+					$this->middleware('throttle:10,60'); // 10 запросов в час
+					
+					
+				}
+				
+			В маршрутах:
+
+				->middleware(['throttle:uploads'])
+				
+					or
+				
+				::middleware(['throttle:uploads'])
+					
+		ССЫЛКА:
+		
+			https://laravel.com/docs/10.x/routing#rate-limiting
+			
+			
+
+
+
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

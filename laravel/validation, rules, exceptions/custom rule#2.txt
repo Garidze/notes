@@ -1,0 +1,111 @@
+1. ENUM:
+
+		<?php
+
+		namespace App\Enums\Messages;
+
+		enum MessageStatus :int
+		{
+			case MODERATION = 0;
+			case APPROVED = 1;
+			case DECLINED = 2;
+
+			public function textMessage()
+			{
+				return match ($this->value) {
+					self::MODERATION->value => 'Модерация',
+					self::APPROVED->value => 'Одобрено',
+					self::DECLINED->value => 'Отклонено',
+				};
+			}
+		}
+		
+		
+2. php artisan make:rule MessageStatusRule
+
+		<?php
+
+		namespace App\Rules;
+
+		use Closure;
+		use Illuminate\Contracts\Validation\ValidationRule;
+		use App\Enums\Messages\MessageStatus;
+
+		class MessageStatusRule implements ValidationRule
+		{
+			/**
+			 * Run the validation rule.
+			 *
+			 * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+			 */
+			public function validate(string $attribute, mixed $value, Closure $fail): void
+			{
+				if(! MessageStatus::tryFrom($value) )
+				{
+					$fail('Такого статуса не существует!');
+				}
+			}
+		}
+		
+		
+3. MessageRequest:
+
+		<?php
+
+		namespace App\Http\Requests\admin;
+
+		use App\Rules\MessageStatusRule;
+		use Illuminate\Foundation\Http\FormRequest;
+
+		class MessageRequest extends FormRequest
+		{
+			/**
+			 * Determine if the user is authorized to make this request.
+			 */
+			public function authorize(): bool
+			{
+				return true;
+			}
+
+			/**
+			 * Get the validation rules that apply to the request.
+			 *
+			 * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
+			 */
+			public function rules(): array
+			{
+				return [
+					'status_moderate' => ['nullable', new MessageStatusRule()],
+					'images' => 'nullable|array',
+					'status_ban' => 'boolean',
+					'user_ban' => 'boolean',
+					'note' => 'nullable',
+					'warning' => 'nullable',
+				];
+			}
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

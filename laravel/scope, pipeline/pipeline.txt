@@ -1,0 +1,11 @@
+PIPELINE
+
+$filtered = app(\Illuminate\Pipeline\Pipeline::class)
+	->send($query)
+	->through([
+		\App\Filters\CountryFilters\Country::class,
+		\App\Filters\CountryFilters\Population::class,
+		\App\Filters\CountryFilters\Search::class,
+	])
+	->thenReturn()
+	->get();

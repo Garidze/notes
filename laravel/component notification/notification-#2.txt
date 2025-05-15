@@ -1,0 +1,94 @@
+1. php artisan make:component notification/NotificationComponent
+
+2. app/View/Components/notification/NotificationComponent.php
+
+	const NOTIFICATION_MESSAGE = [
+		'store' => [
+			'type' => 'sectionSuccess',
+			'text' => 'Congratulation! Data stored'
+		],
+		'update' => [
+			'type' => 'sectionSuccess',
+			'text' => 'Congratulation! Data updated'
+		],
+		'delete' => [
+			'type' => 'sectionSuccess',
+			'text' => 'Congratulation! Data deleted'
+		],
+		'passwordUpdate' => [
+			'type' => 'sectionSuccess',
+			'text' => 'Congratulation! Password updated'
+		]
+	];
+
+	public $notificationData;
+	public bool $hasDataNotification;
+
+	public function __construct()
+	{
+		$dataSession = session()->get('notification');
+		$this->hasDataNotification = $dataSession !== null;
+		$this->notificationData = $dataSession ? self::NOTIFICATION_MESSAGE[$dataSession] : '';
+	}
+
+
+	public function render()
+	{
+		return view('components.notification.store-message');
+	}
+	
+3. resources/views/components/notification/notification-component.blade.php
+
+	@if($hasDataNotification)
+		<div class="mainContent__notification {{ $notificationData['type'] }}">{{ $notificationData['text'] }}</div>
+	@endif
+	
+	
+4. CSS:
+
+	.sectionDanger {
+	  color: #842029;
+	  background: #f8d7da;
+	  border: 1px solid #f5c2c7;
+	}
+
+	.sectionSuccess {
+	  background: #d1e7dd;
+	  border: 1px solid #badbcc;
+	  color: #0f5132;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	

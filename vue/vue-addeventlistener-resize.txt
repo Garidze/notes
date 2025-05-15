@@ -1,0 +1,18 @@
+let app = Vue.createApp({
+    data() {
+        return {
+            currDocWidth: 0,
+        }
+    },
+    methods: {
+        getCurrDocWidth() {
+            this.currDocWidth = document.documentElement.clientWidth;
+        }
+    },
+    mounted() {
+        window.addEventListener('resize', this.getCurrDocWidth)
+    }
+	unmounted() {
+		window.removeEventListener('resize', this.getCurrDocWidth);
+	},
+})

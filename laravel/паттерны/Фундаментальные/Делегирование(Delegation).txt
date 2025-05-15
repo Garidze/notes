@@ -1,0 +1,90 @@
+1. Абстрактный класс - CurrencyAbstract:
+
+	<?php
+
+		namespace App\Services\Delegation;
+
+		use App\Services\Delegation\UsdCurrency;
+		use App\Services\Delegation\EurCurrency;
+
+		abstract class CurrencyAbstract
+		{
+			protected $currency;
+
+			public function __construct()
+			{
+				$this->currency = $this->setCurrency();
+			}
+
+			protected function setCurrency(){}
+
+			public function getCurrency()
+			{
+				return $this->currency;
+			}
+		}
+		
+		
+2. Классы валют UsdCurrency и EurCurrency:
+
+	UsdCurrency:
+
+		<?php
+
+			namespace App\Services\Delegation;
+
+			protected function setCurrency(){
+				return ['currency' => 'USD'];
+			}
+			
+	EurCurrency:
+		
+		<?php
+
+			namespace App\Services\Delegation;
+			
+			protected function setCurrency(){
+				return ['currency' => 'EUR'];
+			}
+			
+			
+3. Делигирующий класс CurrencyApp:
+
+	<?php
+
+		namespace App\Services\Delegation;
+
+		use App\Services\Delegation\UsdCurrency;
+		use App\Services\Delegation\EurCurrency;
+
+		class CurrencyApp
+		{
+			protected $currencyClass;
+
+			public function usdCurrency()
+			{
+				$this->currencyClass = new UsdCurrency();
+			}
+
+			public function eurCurrency()
+			{
+				$this->currencyClass = new EurCurrency();
+			}
+
+			public function getCurrentCurrency()
+			{
+				return $this->currencyClass->getCurrency();
+			}
+		}
+
+
+4. Использование в контроллере:
+
+    public function index()
+    {
+        $delegation = new CurrencyApp();
+		
+        $delegation->usdCurrency();
+
+        dd($delegation->getCurrentCurrency());
+    }

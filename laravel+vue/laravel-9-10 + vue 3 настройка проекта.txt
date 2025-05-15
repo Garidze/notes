@@ -1,0 +1,101 @@
+1. composer require laravel/ui
+
+
+2. php artisan ui vue (если нужна авторизация: php artisan ui vue --auth)
+	(   
+		a. прописывает настройки vue в файл resources/js/app.js
+		b. создает файл ExampleComponent.vue в папке - resources/js/components
+	)
+	
+	
+3. Подключаем app.js -> @vite(['resources/scss/app.scss', 'resources/js/app.js'])) ;
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		@vite(['resources/scss/app.scss', 'resources/js/app.js'])
+	</head>
+
+4. package.json -> версия д.б. -  "@vitejs/plugin-vue": "^4.0.0" ;
+
+5. npm i (можно отключить import './bootstrap' в файле app.js для более быстрой работы vite) ;
+
+6. В шаблоне создаем конреневой #app: <div id="app"></div>
+
+7. vite build ;
+
+
+
+Пример:
+
+-----html-----
+
+<div id="app">
+	<h1>Главная страница</h1>
+	<example-component :status="false"></example-component>
+</div>
+	
+-----end html-----
+
+-----component.vue-----
+
+<template>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header"><h2>Example Component</h2></div>
+					<br>
+                    <div class="card-body">
+                        I'm an example component.
+						<br>
+                        Status isOpen: {{isOpen}}
+                    </div><br>
+                    <h3 v-if="isOpen">Block with params</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        props: {
+            status: {type: Boolean, default: false}
+        },
+        data() {
+            return {
+                isOpen: this.status,
+            }
+        }
+    }
+</script>
+
+<style scoped lang="scss">
+
+</style>
+
+
+-----end component.vue-----
+
+
+@vite(['resources/css/app.css', 'resources/js/app.js'])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

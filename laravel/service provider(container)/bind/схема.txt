@@ -1,0 +1,16 @@
+IBind ->
+
+	BindFirst implements IBind
+	BindSecond implements IBind
+	
+	
+AppServiceProvider ->
+
+	TestSecondController
+	TestThirdController
+	
+	
+USE ->
+
+	TestSecondController
+	TestThirdController

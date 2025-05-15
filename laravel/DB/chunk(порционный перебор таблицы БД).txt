@@ -1,0 +1,21 @@
+Переопределяем свойство  active у всей таблицы, но берем по 10 записей:
+
+Пример №1:
+
+	Post::query()->chunk(10, function ($posts){
+		foreach ($posts as $post) {
+			$post->update(['active' => 0]);
+		}
+	});
+	
+	
+Пример №2(с условием):
+
+	Post::query()
+		->where('active', 1)
+		->chunkById(10, function ($posts){
+			foreach ($posts as $post) 
+			{
+				$post->update(['active' => 0]);
+			}
+		});

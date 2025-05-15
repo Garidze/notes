@@ -1,0 +1,127 @@
+-- Генерация пути, запись в Storage:
+
+	$folderName = 'img-' . date('m.Y');
+	$imagePath = request()->file($inputName)->store($folderName, 'public');
+	
+	Результат:
+	
+		storage/app/public/img-03.2023/THwZjruw0zBffWxL3R0NaezgQkznmGSB7N2H1A10.png
+		
+		
+-- Удаление файла:
+
+	$pathToFile = 'public\\' . $filename;
+	Storage::delete($pathToFile);
+	
+	
+-- Request:
+
+	public function rules(): array
+    {
+        return [
+
+            'img' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+        ];
+    }
+	
+	
+	
+-- EXAMPLE --
+
+
+	-- Service --
+	
+		Create php class app/Services/ImageService.php:
+	
+			<?php
+
+			namespace App\Services;
+			use Illuminate\Support\Facades\Storage;
+
+				class ImageService
+				{
+
+					public function storeAndPath($inputName)
+					{
+						$folderName = 'img-' . date('m.Y');
+						$imagePath = request()->file($inputName)->store($folderName, 'public');
+						return $imagePath;
+					}
+
+					public function deleteImage($filename)
+					{
+						$imgPath = 'public\\' . $filename;
+						Storage::delete($imgPath);
+					}
+
+				}
+				
+	-- Request --
+	
+		public function rules(): array
+		{
+			return [
+				'title' => 'required',
+				'text' => 'required',
+				'img_title' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+				'categories' => 'required|array|min:1',
+				'img_inner' => 'nullable',
+			];
+		}
+
+		public function processedData($path, $userId)
+		{
+			$data = $this->validated();
+			$data['img_title'] = $path;
+			$data['user_id'] = $userId;
+			return $data;
+		}
+				
+	-- Controller --
+	
+		use App\Http\Requests\post\PostStore;
+		use App\Services\ImageService;
+		
+		public function store(PostStore $request, ImageService $imageService)
+		{
+			$imgPath = $imageService->storeAndPath('img_title');
+			$dataToStore = $request->processedData($imgPath, $request->user()->id);
+			$post = Post::create($dataToStore);
+			$post->categories()->sync($dataToStore['categories']);
+			return redirect()->route('post.index')->with(['ntf-type'=>'alert-success', 'ntf-message'=>'Post has been created successfully!']);
+		}
+		
+		public function destroy(ImageService $imageService, $id)
+		{
+			$post = Post::findOrFail($id);
+			$imageService->deleteImage($post->img_title);
+			$post->delete();
+			return redirect()->route('post.index')->with(['ntf-type'=>'alert-success', 'ntf-message'=>'Post has been deleted successfully!']);
+		}
+			
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

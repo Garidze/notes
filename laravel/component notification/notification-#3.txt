@@ -1,0 +1,17 @@
+1. Controller:
+
+	public function store(Request $request)
+	{
+		//do store
+		session('alert' => __('Тут текст сообщения!'));
+		return redirect......
+	}
+	
+	
+2. Component:
+
+	@if($alert = session()->pull('alert')) //забрать и удалить
+		<div class="alert-success">
+			{{ $alert }}
+		</div>
+	@endif

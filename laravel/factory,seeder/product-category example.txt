@@ -1,0 +1,73 @@
+Category:
+
+	Seeder:
+
+		public function run()
+		{
+			$categories = ['Notebooks', 'Tablets', 'Phones', 'PC'];
+
+			foreach ($categories as $category) {
+				Category::create([
+					'title' => $category,
+					'desc' => fake()->text(),
+				]);
+			}
+		}
+		
+		
+Product:
+
+	Factory:
+	
+		public function definition()
+		{
+			$categoryId = Category::inRandomOrder()->first()->id;
+			$items = [
+			  1=>['Acer', 'HP', 'Dell', 'Asus', 'Lenovo', 'MSI', 'Samsung', 'MacBook'],
+			  2=>['Acer', 'Asus', 'Apple', 'LG', 'Nokia', 'Redmi', 'Panasonic', 'Toshiba'],
+			  3=>['IPhone', 'Xiaomi', 'Samsung', 'Nokia', 'Sony', 'LG', 'HTC', "Meizu"],
+			  4=>['Compaq', 'Asus', 'Acer', 'Fujitsu', 'GIGABYTE', 'IBM', 'Intel'],
+			];
+			$key = array_rand($items[$categoryId]);
+			return [
+				'title'=>$items[$categoryId][$key],
+				'desc'=>fake()->text(),
+				'price'=>fake()->numberBetween(50, 1000),
+				'category_id'=>$categoryId,
+				'created_at'=>now()
+			];
+		}
+		
+	Seeder:
+	
+		public function run()
+		{
+			Product::factory(13)->create();
+		}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

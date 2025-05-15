@@ -1,0 +1,93 @@
+Proxy settings:
+
+	composer:
+
+		set http_proxy=192.168.7.181:3128
+
+		set https_proxy=192.168.7.181:3128
+		
+
+	npm:
+		
+		npm config set proxy http://192.168.7.181:3128
+
+
+1. Laravel install:
+
+	composer create-project laravel/laravel .
+	
+	
+2. Breeze install:
+
+	a. composer require laravel/breeze --dev ;
+	
+	b. php artisan breeze:install (blade with alpine) ;
+	
+	
+3. Copy file: resources/js/app.js -> resources/js/app-alpine.js
+
+	resources/js/app-alpine.js:
+	
+		// import './bootstrap';
+
+		import Alpine from 'alpinejs';
+
+		window.Alpine = Alpine;
+
+		Alpine.start();
+		
+	resources/css/app.css:
+	
+		@tailwind base;
+		@tailwind components;
+		@tailwind utilities;
+
+
+4. Install Laravel UI + install vue:
+
+	a. composer require laravel/ui ;
+	
+	b. php artisan ui vue ;
+	
+	?. ( npm i --force )
+	
+	
+5. Settings:
+
+	vite.config.js:
+
+		import { defineConfig } from 'vite';
+		import laravel from 'laravel-vite-plugin';
+		import vue from '@vitejs/plugin-vue';
+
+		export default defineConfig({
+			plugins: [
+				laravel({
+					input: [
+						'resources/css/app.css',
+						'resources/sass/app.scss',
+						'resources/js/app.js',
+						'resources/js/app-alpine.js',
+					],
+					refresh: true,
+				}),
+				vue({
+					template: {
+						transformAssetUrls: {
+							base: null,
+							includeAbsolute: false,
+						},
+					},
+				}),
+			],
+			resolve: {
+				alias: {
+					vue: 'vue/dist/vue.esm-bundler.js',
+				},
+			},
+		});
+
+
+	resources/views/layouts/app.blade.php:
+	
+		@vite(['resources/css/app.css', 'resources/js/app-alpine.js'])
