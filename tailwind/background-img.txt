@@ -1,0 +1,3 @@
+<div class="starting:opacity-0 opacity-100 duration-750 animate__bounce flex container items-center justify-center grow max-w-4xl bg-[image:var(--bg-light-mode-image)] dark:bg-[image:var(--bg-dark-mode-image)] bg-contain bg-center bg-no-repeat animation-[fade] duration-1500"
+     style="--bg-light-mode-image: url('{{ asset('storage/images/laravel-bg-white.webp') }}'); --bg-dark-mode-image: url('{{ asset('storage/images/laravel-bg-white.webp') }}');"
+></div>
