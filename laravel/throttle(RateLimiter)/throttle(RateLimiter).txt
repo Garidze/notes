@@ -1,0 +1,98 @@
+1. app/Providers/AppServiceProvider.php:
+
+    <?php
+
+        namespace App\Providers;
+
+        use App\Enums\Locales;
+        use Illuminate\Support\ServiceProvider;
+        use Illuminate\Cache\RateLimiting\Limit;
+        use Illuminate\Http\Request;
+        use Illuminate\Support\Facades\RateLimiter;
+        use Illuminate\Support\Str;
+
+        class AppServiceProvider extends ServiceProvider
+        {
+            /**
+            * Register any application services.
+            */
+            public function register(): void
+            {
+                //
+            }
+
+            /**
+            * Bootstrap any application services.
+            */
+            public function boot(): void
+            {
+                RateLimiter::for('api', function (Request $request) {
+                    return Limit::perMinute(2)->by($request->user()?->id ?: $request->ip());
+                });
+                RateLimiter::for('api_v1', function (Request $request) {
+                    return Limit::perMinute(5)->by($request->user()?->id ?: $request->ip());
+                });
+
+                RateLimiter::for('welcome', function (Request $request) {
+                    localeSetter($request);
+                    return Limit::perMinute(3)->by($request->user()?->id ?: $request->ip());
+                });
+            }
+        }
+
+
+2. Для группы маршрутов в файле - bootstrap/app.php:
+
+    <?php
+
+        use App\Http\Middleware\HandleAppearance;
+        use App\Http\Middleware\HandleInertiaRequests;
+        use Illuminate\Foundation\Application;
+        use Illuminate\Foundation\Configuration\Exceptions;
+        use Illuminate\Foundation\Configuration\Middleware;
+        use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+        use Illuminate\Support\Facades\Route;
+        use App\Http\Middleware\LocaleMiddleware;
+
+        return Application::configure(basePath: dirname(__DIR__))
+            ->withRouting(
+                web: __DIR__.'/../routes/web.php',
+                commands: __DIR__.'/../routes/console.php',
+                health: '/up',
+                then: function () {
+                    Route::middleware('throttle:api')->prefix('api')->group(base_path('routes/api.php'));
+                    Route::middleware('throttle:api_v1')->prefix('api/v1')->group(base_path('routes/api_v1.php'));
+                },
+            )
+            ->withMiddleware(function (Middleware $middleware) {
+                $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+
+                $middleware->web(append: [
+                    HandleAppearance::class,
+                    LocaleMiddleware::class,
+                    HandleInertiaRequests::class,
+                    AddLinkHeadersForPreloadedAssets::class,
+                ]);
+                $middleware->alias([
+                    'locale' => \App\Http\Middleware\LocaleMiddleware::class,
+                ]);
+            })
+
+            ->withExceptions(function (Exceptions $exceptions) {
+                //
+            })->create();
+
+
+
+
+3. Для одного маршрута в файле - routes/web.php:
+
+    Route::middleware('auth')->group(function () {
+
+        Route::get('/welcome', [\App\Http\Controllers\Supervisor\PageController::class, 'index'])->name('auth.welcome')->middleware('throttle:welcome');
+
+//        Route::middleware('throttle:welcome')->group(function () {
+//            Route::get('/welcome', [\App\Http\Controllers\Supervisor\PageController::class, 'index'])->name('auth.welcome');
+//        });
+
+    });
