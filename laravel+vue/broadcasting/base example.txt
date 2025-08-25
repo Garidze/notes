@@ -40,6 +40,11 @@
                     new Channel('my-channel'),
                 ];
             }
+
+//        return [
+//            new PrivateChannel('broad-cast-test-channel.' . $this->data['userId']),
+//        ];
+
         }
 
 
@@ -58,6 +63,10 @@
         import { ref, onMounted, onUnmounted } from 'vue';
         import { useEchoPublic } from '@laravel/echo-vue';
 
+        // const props = defineProps({
+        //     id: Number,
+        // });
+
         const orderStatus = ref();
 
         const { listen, leaveChannel } = useEchoPublic(
@@ -67,6 +76,14 @@
                 orderStatus.value = e.data;
             }
         );
+
+        // const { listen, leave } = useEcho(
+        //     `broad-cast-test-channel.${props.id}`,
+        //     "BroadCastTestEvent",
+        //     (e) => {
+        //         data.value = e.data;
+        //     },
+        // );
 
         onMounted(() => {
             listen();
@@ -158,6 +175,12 @@
     {
         $phrase = fake()->catchPhrase();
         $data = ['message' => $phrase, 'status' => 'ok'];
+//        $data = [
+//            'userId' => auth()->user()->id,
+//            'message' => fake()->sentence(),
+//            'status' => fake()->randomElements(['400', '404', '500', '503']),
+//            'time' => now()->format('H:i:s, Y-m-d')
+//        ];
         MyEvent::dispatch($data);
         return view('authorized.broad.index');
     }
@@ -171,8 +194,20 @@
         <p class="text-center">{{ __('Test(auth)') }}</p>
         <p class="text-sm">
             <my-broad></my-broad>
+            //<broad-test-component id="{{ auth()->user()->id }}"></broad-test-component>
         </p>
     </div>
+
+
+
+
+#####
+
+routes/channels.php:
+
+Broadcast::channel('broad-cast-test-channel.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
+});
 
 
 
